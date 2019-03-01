@@ -1,5 +1,30 @@
 # Cezerin - Ecommerce Progressive Web Apps
 
+## Installation
+
+Use node v8.10.0 (or use `nvs` to automatically load the correct node version).
+
+First time setup:
+```
+yarn
+yarn setup
+```
+
+Link the `/theme` folder:
+```
+cd theme && yarn link
+yarn link theme
+```
+
+Building and running:
+```
+yarn build
+yarn start
+```
+
+By default, the store will be running on `http://localhost:3000`, the admin - application will be mounted on `http://localhost:3000/admin` and the API will be listening to `http://localhost:30001`.
+
+
 [![CircleCI](https://circleci.com/gh/cezerin2/cezerin2/tree/master.svg?style=svg)](https://circleci.com/gh/cezerin2/cezerin2/tree/master)
 
 Cezerin2 is React and Node.js based eCommerce platform. Allows creating a Progressive Web Apps. This is based from cezerin after project went dead. (https://github.com/cezerin/cezerin)

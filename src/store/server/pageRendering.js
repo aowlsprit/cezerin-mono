@@ -11,7 +11,7 @@ import { initOnServer } from 'theme';
 import serverSettings from './settings';
 import reducers from '../shared/reducers';
 import { loadState } from './loadState';
-import { indexHtml } from './readIndexHtml';
+import getIndexHtml from './readIndexHtml';
 import App from '../shared/app';
 
 initOnServer({
@@ -101,7 +101,7 @@ const renderPage = (req, res, store, themeText, placeholders) => {
 	const head = getHead();
 	const placeholder = getPlaceholder(placeholders);
 
-	const html = indexHtml
+	const html = getIndexHtml()
 		.replace('{placeholder_head_start}', placeholder.head_start)
 		.replace('{placeholder_head_end}', placeholder.head_end)
 		.replace('{placeholder_body_start}', placeholder.body_start)

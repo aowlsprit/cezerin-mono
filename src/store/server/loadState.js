@@ -99,6 +99,9 @@ const getAllData = (currentPage, productFilter, cookie) => {
 			if (currentPage.type === PRODUCT_CATEGORY) {
 				categoryDetails = categories.find(c => c.id === currentPage.resource);
 			}
+			if (themeSettings.logo == null) {
+				themeSettings.logo = 'http://logodust.com/img/free/logo46.png';
+			}
 			return {
 				checkoutFields,
 				categories,
@@ -187,6 +190,10 @@ const getState = (currentPage, settings, allData, location, productFilter) => {
 			themeSettings: themeSettings
 		}
 	};
+
+	if (state.app.settings.logo == null) {
+		state.app.settings.logo = 'http://logodust.com/img/free/logo46.png';
+	}
 
 	return state;
 };
