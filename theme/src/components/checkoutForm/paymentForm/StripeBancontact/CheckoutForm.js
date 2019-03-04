@@ -8,31 +8,50 @@ class CheckoutForm extends React.Component {
 			inProgress: false
 		};
 		this.submit = this.submit.bind(this);
+
+		const { shopSettings, stripe } = this.props;
+		const { paymentPending } = shopSettings;
+
+		console.log('>>> Found pendingPayment', paymentPending);
+
+		if (paymentPending != null && paymentPending.parsedLocation != null) {
+			this.state = {
+				inProgress: true
+			};
+			setTimeout(() => {
+				this.props.stripe
+					.retrieveSource({
+						id: paymentPending.parsedLocation.source,
+						client_secret: paymentPending.parsedLocation.client_secret
+					})
+					.then(result => {
+						console.log('>>> GOT SOURCE', result);
+						console.log('>>> Charging', result);
+						this.props.onCreateToken(result.source.id);
+					});
+			}, 2000);
+		}
 	}
 
 	async submit(ev) {
 		this.setState({
 			inProgress: true
 		});
-		const { formSettings, onCreateToken, stripe } = this.props;
-		console.log('>>> formSettings', formSettings);
+		const { formSettings, stripe } = this.props;
+		const { amount, email } = formSettings;
 		const { source } = await stripe.createSource({
 			type: 'bancontact',
-			amount: 50,
+			amount: amount * 100,
 			currency: 'eur',
 			owner: {
-				name: 'test',
-				email: 'test@test.be'
+				name: email,
+				email
 			},
 			redirect: {
 				return_url: window.location.href
 			},
-			statement_descriptor: 'Stripe Payments Demo',
-			metadata: {
-				order: 123123
-			}
+			statement_descriptor: 'Stripe Payments Demo'
 		});
-		console.log('>>> source', source);
 		if (source.redirect.url != null) {
 			window.location.replace(source.redirect.url);
 		}

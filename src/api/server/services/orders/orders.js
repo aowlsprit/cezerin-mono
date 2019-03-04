@@ -189,8 +189,8 @@ class OrdersService {
 		if (!ObjectID.isValid(id)) {
 			return Promise.reject('Invalid identifier');
 		}
-		return this.getOrders({ id: id }).then(
-			items => (items.data.length > 0 ? items.data[0] : {})
+		return this.getOrders({ id: id }).then(items =>
+			items.data.length > 0 ? items.data[0] : {}
 		);
 	}
 
@@ -762,7 +762,9 @@ class OrdersService {
 	}
 
 	async chargeOrder(orderId) {
+		console.log('>>> CHARGE ORDER', orderId);
 		const order = await this.getSingleOrder(orderId);
+		console.log('>>> ORDER', order);
 		const isSuccess = await PaymentGateways.processOrderPayment(order);
 		return isSuccess;
 	}

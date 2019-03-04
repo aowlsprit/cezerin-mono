@@ -1,4 +1,5 @@
 import React from 'react';
+import queryString from 'query-string';
 import { themeSettings, text } from '../../lib/settings';
 import CheckoutStepContacts from './stepContacts';
 import CheckoutStepShipping from './stepShipping';
@@ -7,18 +8,29 @@ import CheckoutStepPayment from './stepPayment';
 export default class CheckoutForm extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			step: 1
-		};
+		const { location } = this.props;
+		const parsedLocation = queryString.parse(location.search);
+
+		if (parsedLocation.source != null) {
+			this.state = {
+				step: 3,
+				parsedLocation
+			};
+		} else {
+			this.state = {
+				step: 1
+			};
+		}
 	}
 
 	componentDidMount() {
-		this.props.loadShippingMethods();
-		this.props.loadPaymentMethods();
+		const { loadShippingMethods, loadPaymentMethods } = this.props;
+		loadShippingMethods();
+		loadPaymentMethods();
 	}
 
 	changeStep = step => {
-		this.setState({ step: step });
+		this.setState({ step });
 	};
 
 	handleContactsSave = () => {
@@ -38,7 +50,8 @@ export default class CheckoutForm extends React.Component {
 	};
 
 	handleContactsSubmit = values => {
-		this.props.updateCart({
+		const { updateCart } = this.props;
+		updateCart({
 			email: values.email,
 			mobile: values.mobile
 		});
@@ -46,42 +59,46 @@ export default class CheckoutForm extends React.Component {
 	};
 
 	handleLocationSave = shippingLocation => {
-		this.props.updateCart(
+		const { updateCart, loadShippingMethods, loadPaymentMethods } = this.props;
+		updateCart(
 			{
 				shipping_address: shippingLocation,
 				billing_address: shippingLocation,
 				payment_method_id: null,
 				shipping_method_id: null
 			},
-			cart => {
-				this.props.loadShippingMethods();
-				this.props.loadPaymentMethods();
+			() => {
+				loadShippingMethods();
+				loadPaymentMethods();
 			}
 		);
 	};
 
 	handleShippingMethodSave = shippingMethodId => {
-		this.props.updateCart(
+		const { updateCart, loadPaymentMethods } = this.props;
+		updateCart(
 			{
 				payment_method_id: null,
 				shipping_method_id: shippingMethodId
 			},
-			cart => {
-				this.props.loadPaymentMethods();
+			() => {
+				loadPaymentMethods();
 			}
 		);
 	};
 
 	handlePaymentMethodSave = paymentMethodId => {
-		this.props.updateCart({
+		const { updateCart } = this.props;
+		updateCart({
 			payment_method_id: paymentMethodId
 		});
 	};
 
 	isShowPaymentForm = () => {
-		const { payment_method_gateway } = this.props.state.cart;
+		const { state } = this.props;
+		const { payment_method_gateway: paymentMethodGateway } = state.cart;
 		const paymentGatewayExists =
-			payment_method_gateway && payment_method_gateway !== '';
+			paymentMethodGateway && paymentMethodGateway !== '';
 		return paymentGatewayExists;
 	};
 
@@ -128,6 +145,10 @@ export default class CheckoutForm extends React.Component {
 			checkoutFields,
 			processingCheckout
 		} = this.props.state;
+
+		settings.paymentPending = {
+			parsedLocation: this.state.parsedLocation
+		};
 
 		const {
 			checkoutInputClass = 'checkout-field',
@@ -199,6 +220,8 @@ export default class CheckoutForm extends React.Component {
 							onCreateToken={this.handleCheckoutWithToken}
 						/>
 					)}
+					{/* 
+					{step === 4 && <p> Pending order confirmation </p>} */}
 				</div>
 			);
 		} else {

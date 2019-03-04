@@ -1,9 +1,9 @@
 import stripePackage from 'stripe';
 import OrdersService from '../services/orders/orders';
-import OrdertTansactionsService from '../services/orders/orderTransactions';
+import OrderTansactionsService from '../services/orders/orderTransactions';
 
 const getPaymentFormSettings = options => {
-	const { gateway, gatewaySettings, order, amount, currency } = options;
+	const { gatewaySettings, order, amount, currency } = options;
 	const formSettings = {
 		order_id: order.id,
 		amount,
@@ -39,7 +39,7 @@ const processOrderPayment = async ({ order, gatewaySettings, settings }) => {
 			});
 		}
 
-		await OrdertTansactionsService.addTransaction(order.id, {
+		await OrderTansactionsService.addTransaction(order.id, {
 			transaction_id: charge.id,
 			amount: charge.amount / 100,
 			currency: charge.currency,

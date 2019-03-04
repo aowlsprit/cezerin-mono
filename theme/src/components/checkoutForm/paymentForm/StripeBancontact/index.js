@@ -25,14 +25,16 @@ export default class StripeElements extends React.Component {
 	render() {
 		const { formSettings, shopSettings, onPayment, onCreateToken } = this.props;
 		return (
-			<StripeProvider stripe={this.state.stripe}>
-				<StoreCheckout
-					formSettings={formSettings}
-					shopSettings={shopSettings}
-					onPayment={onPayment}
-					onCreateToken={onCreateToken}
-				/>
-			</StripeProvider>
+			<React.Fragment>
+				<StripeProvider stripe={this.state.stripe}>
+					<StoreCheckout
+						formSettings={formSettings}
+						shopSettings={shopSettings}
+						onPayment={onPayment}
+						onCreateToken={onCreateToken}
+					/>
+				</StripeProvider>
+			</React.Fragment>
 		);
 	}
 }

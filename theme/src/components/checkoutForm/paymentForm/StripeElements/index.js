@@ -14,9 +14,10 @@ export default class StripeElements extends React.Component {
 		const script = document.createElement('script');
 		script.src = SCRIPT_URL;
 		script.async = true;
+		const { formSettings } = this.props;
 		script.onload = () => {
 			this.setState({
-				stripe: window.Stripe(this.props.formSettings.public_key)
+				stripe: window.Stripe(formSettings.public_key)
 			});
 		};
 		container.appendChild(script);
@@ -24,8 +25,9 @@ export default class StripeElements extends React.Component {
 
 	render() {
 		const { formSettings, shopSettings, onPayment, onCreateToken } = this.props;
+		const { stripe } = this.state;
 		return (
-			<StripeProvider stripe={this.state.stripe}>
+			<StripeProvider stripe={stripe}>
 				<StoreCheckout
 					formSettings={formSettings}
 					shopSettings={shopSettings}

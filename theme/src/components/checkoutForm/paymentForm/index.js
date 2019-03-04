@@ -14,6 +14,26 @@ export default class PaymentForm extends React.Component {
 		};
 	}
 
+	componentDidMount() {
+		this.fetchFormSettings();
+	}
+
+	componentWillReceiveProps(nextProps) {
+		const { gateway, amount } = this.props;
+		if (nextProps.gateway !== gateway || nextProps.amount !== amount) {
+			this.fetchFormSettings();
+		}
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		const { gateway, amount } = this.props;
+		return (
+			nextProps.gateway !== gateway ||
+			nextProps.amount !== amount ||
+			this.state !== nextState
+		);
+	}
+
 	fetchFormSettings = () => {
 		this.setState({
 			loading: true
@@ -21,7 +41,7 @@ export default class PaymentForm extends React.Component {
 
 		api.ajax.paymentFormSettings
 			.retrieve()
-			.then(({ status, json }) => {
+			.then(({ json }) => {
 				this.setState({
 					formSettings: json,
 					loading: false
@@ -36,34 +56,15 @@ export default class PaymentForm extends React.Component {
 			});
 	};
 
-	componentDidMount() {
-		this.fetchFormSettings();
-	}
-
-	componentWillReceiveProps(nextProps) {
-		if (
-			nextProps.gateway !== this.props.gateway ||
-			nextProps.amount !== this.props.amount
-		) {
-			this.fetchFormSettings();
-		}
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		return (
-			nextProps.gateway !== this.props.gateway ||
-			nextProps.amount !== this.props.amount ||
-			this.state !== nextState
-		);
-	}
-
 	render() {
 		const { gateway, shopSettings, onPayment, onCreateToken } = this.props;
 		const { formSettings, loading } = this.state;
 
 		if (loading) {
 			return null;
-		} else if (formSettings && gateway && gateway !== '') {
+		}
+
+		if (formSettings && gateway && gateway !== '') {
 			switch (gateway) {
 				case 'paypal-checkout':
 					return (

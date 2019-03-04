@@ -1,5 +1,5 @@
 import React from 'react';
-import { themeSettings, text } from '../../lib/settings';
+import { text } from '../../lib/settings';
 import PaymentForm from './paymentForm';
 
 const CheckoutStepPayment = props => {
@@ -15,7 +15,10 @@ const CheckoutStepPayment = props => {
 		onCreateToken
 	} = props;
 
-	const { payment_method_gateway, grand_total } = cart;
+	const {
+		payment_method_gateway: paymentMethodGateway,
+		grand_total: grandTotal
+	} = cart;
 
 	if (!show) {
 		return (
@@ -36,8 +39,8 @@ const CheckoutStepPayment = props => {
 			<div className="checkout-button-wrap">
 				{!processingCheckout && (
 					<PaymentForm
-						gateway={payment_method_gateway}
-						amount={grand_total}
+						gateway={paymentMethodGateway}
+						amount={grandTotal}
 						shopSettings={settings}
 						onPayment={handleSuccessPayment}
 						inputClassName={inputClassName}

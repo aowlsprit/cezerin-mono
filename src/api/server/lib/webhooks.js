@@ -11,6 +11,17 @@ const trigger = async ({ event, payload }) => {
 	}
 };
 
+const sign = ({ data, secret }) => {
+	if (secret && secret.length > 0) {
+		const hmac = crypto.createHmac('sha256', secret);
+		hmac.update(data);
+		const signature = hmac.digest('hex');
+		return signature;
+	}
+
+	return '';
+};
+
 const send = ({ event, payload, webhook }) => {
 	if (
 		webhook &&
@@ -19,7 +30,7 @@ const send = ({ event, payload, webhook }) => {
 		webhook.url.length > 0
 	) {
 		const data = JSON.stringify(payload);
-		const signature = sign({ data: data, secret: webhook.secret });
+		const signature = sign({ data, secret: webhook.secret });
 
 		fetch(webhook.url, {
 			method: 'POST',
@@ -32,17 +43,6 @@ const send = ({ event, payload, webhook }) => {
 				'X-Hook-Signature': signature
 			}
 		}).catch(() => {});
-	}
-};
-
-const sign = ({ data, secret }) => {
-	if (secret && secret.length > 0) {
-		const hmac = crypto.createHmac('sha256', secret);
-		hmac.update(data);
-		const signature = hmac.digest('hex');
-		return signature;
-	} else {
-		return '';
 	}
 };
 
@@ -59,6 +59,6 @@ const events = {
 };
 
 export default {
-	trigger: trigger,
-	events: events
+	trigger,
+	events
 };

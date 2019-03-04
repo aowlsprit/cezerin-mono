@@ -3,7 +3,7 @@ import OrdersService from '../services/orders/orders';
 import OrderTansactionsService from '../services/orders/orderTransactions';
 
 const getPaymentFormSettings = options => {
-	const { gateway, gatewaySettings, order, amount, currency } = options;
+	const { gatewaySettings, order, amount, currency } = options;
 	const formSettings = {
 		order_id: order.id,
 		amount,
@@ -17,35 +17,25 @@ const getPaymentFormSettings = options => {
 const processOrderPayment = async ({ order, gatewaySettings, settings }) => {
 	try {
 		const stripe = stripePackage(gatewaySettings.secret_key);
+		console.log('>>> chargin stripe');
+		let charge = null;
+		try {
+			charge = await stripe.charges.create({
+				amount: order.grand_total * 100,
+				currency: 'eur',
+				description: `Order #${order.number}`,
+				metadata: {
+					order_id: order.id
+				},
+				source: order.payment_token
+			});
+		} catch (err) {
+			console.log('>>> err', err);
+		}
 
-		const sourceResult = await stripe.createSource({
-			type: 'bancontact',
-			amount: order.grand_total * 100,
-			currency: settings.currency_code,
-			description: `Order #${order.number}`,
-			statement_descriptor: `Order #${order.number}`,
-			metadata: {
-				order_id: order.id
-			},
-			owner: {
-				name: 'Jenny Rosen',
-				email: order.email
-			},
-			redirect: {
-				return_url: `http://localhost:3000/process-payment-${order.id}`
-			}
-		});
+		console.log('>>> chargin done');
 
-		const charge = await stripe.charges.create({
-			amount: order.grand_total * 100,
-			currency: settings.currency_code,
-			description: `Order #${order.number}`,
-			statement_descriptor: `Order #${order.number}`,
-			metadata: {
-				order_id: order.id
-			},
-			source: sourceResult.id
-		});
+		console.log(charge);
 
 		// status: succeeded, pending, failed
 		const paymentSucceeded =

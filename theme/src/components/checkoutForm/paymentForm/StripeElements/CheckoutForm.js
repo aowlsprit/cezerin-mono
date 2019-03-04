@@ -11,7 +11,7 @@ class CheckoutForm extends React.Component {
 		this.submit = this.submit.bind(this);
 	}
 
-	async submit(ev) {
+	async submit() {
 		this.setState({
 			inProgress: true
 		});
@@ -35,6 +35,7 @@ class CheckoutForm extends React.Component {
 				<CardSection title="Credit Card details" />
 				<div className="checkout-button-wrap">
 					<button
+						type="button"
 						onClick={this.submit}
 						disabled={inProgress}
 						className={`checkout-button button is-primary${
