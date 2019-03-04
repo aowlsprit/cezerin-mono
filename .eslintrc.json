@@ -17,6 +17,7 @@
 		"prettier/prettier": ["error", { "singleQuote": true }],
 		"react/jsx-filename-extension": "off",
 		"import/newline-after-import": 0,
+		"import/no-dynamic-require": "off",
 		"class-methods-use-this": 0,
 		"no-console": "off"
 	}
