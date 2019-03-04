@@ -10,5 +10,9 @@ export const AVAILABLE_PAYMENT_GATEWAYS = [
 	{
 		key: 'stripe-elements',
 		name: 'Stripe Elements'
+	},
+	{
+		key: 'stripe-bancontact',
+		name: 'Stripe Bancontact'
 	}
 ];

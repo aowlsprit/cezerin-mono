@@ -3,6 +3,7 @@ import api from '../../../lib/api';
 import PayPalCheckout from './PayPalCheckout';
 import LiqPay from './LiqPay';
 import StripeElements from './StripeElements';
+import StripeBancontact from './StripeBancontact';
 
 export default class PaymentForm extends React.Component {
 	constructor(props) {
@@ -88,6 +89,17 @@ export default class PaymentForm extends React.Component {
 					return (
 						<div className="payment-form">
 							<StripeElements
+								formSettings={formSettings}
+								shopSettings={shopSettings}
+								onPayment={onPayment}
+								onCreateToken={onCreateToken}
+							/>
+						</div>
+					);
+				case 'stripe-bancontact':
+					return (
+						<div className="payment-form">
+							<StripeBancontact
 								formSettings={formSettings}
 								shopSettings={shopSettings}
 								onPayment={onPayment}
