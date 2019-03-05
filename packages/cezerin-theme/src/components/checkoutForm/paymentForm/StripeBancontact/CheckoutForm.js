@@ -17,7 +17,7 @@ class CheckoutForm extends React.Component {
     } = this.props;
 
     if (paymentPending != null && paymentPending.parsedLocation != null) {
-      this.state = { inProgress: true };
+      this.setState({ inProgress: true });
       setTimeout(() => {
         const { stripe } = this.props;
         stripe
