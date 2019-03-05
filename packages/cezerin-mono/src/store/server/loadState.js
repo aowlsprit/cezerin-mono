@@ -37,48 +37,43 @@ const getCurrentPage = path =>
 
 const getProducts = (currentPage, productFilter) => {
   if (currentPage.type === PRODUCT_CATEGORY || currentPage.type === SEARCH) {
-    let filter = getParsedProductFilter(productFilter);
+    const filter = getParsedProductFilter(productFilter);
     filter.enabled = true;
-    return api.products.list(filter).then(({ status, json }) => json);
-  } else {
-    return null;
+    return api.products.list(filter).then(({ json }) => json);
   }
+  return null;
 };
 
 const getProduct = currentPage => {
   if (currentPage.type === PRODUCT) {
-    return api.products
-      .retrieve(currentPage.resource)
-      .then(({ status, json }) => json);
-  } else {
-    return {};
+    return api.products.retrieve(currentPage.resource).then(({ json }) => json);
   }
+  return {};
 };
 
 const getPage = currentPage => {
   if (currentPage.type === PAGE) {
-    return api.pages
-      .retrieve(currentPage.resource)
-      .then(({ status, json }) => json);
-  } else {
-    return {};
+    return api.pages.retrieve(currentPage.resource).then(({ json }) => json);
   }
+  return {};
 };
 
-const getThemeSettings = () => {
-  return api.theme.settings
+const getThemeSettings = () =>
+  api.theme.settings
     .retrieve()
-    .then(({ status, json }) => json)
-    .catch(err => ({}));
-};
+    .then(({ json }) => json)
+    .catch(err => {
+      console.error('Failed to get theme settings.', err);
+      return {};
+    });
 
-const getAllData = (currentPage, productFilter, cookie) => {
-  return Promise.all([
-    api.checkoutFields.list().then(({ status, json }) => json),
+const getAllData = (currentPage, productFilter, cookie) =>
+  Promise.all([
+    api.checkoutFields.list().then(({ json }) => json),
     api.productCategories
       .list({ enabled: true, fields: CATEGORIES_FIELDS })
-      .then(({ status, json }) => json),
-    api.ajax.cart.retrieve(cookie).then(({ status, json }) => json),
+      .then(({ json }) => json),
+    api.ajax.cart.retrieve(cookie).then(({ json }) => json),
     getProducts(currentPage, productFilter),
     getProduct(currentPage),
     getPage(currentPage),
@@ -110,7 +105,6 @@ const getAllData = (currentPage, productFilter, cookie) => {
       };
     }
   );
-};
 
 const getState = (currentPage, settings, allData, location, productFilter) => {
   const {
@@ -144,18 +138,18 @@ const getState = (currentPage, settings, allData, location, productFilter) => {
   const state = {
     app: {
       settings,
-      location: location,
-      currentPage: currentPage,
+      location,
+      currentPage,
       pageDetails: page,
-      categoryDetails: categoryDetails,
+      categoryDetails,
       productDetails: product,
-      categories: categories,
+      categories,
       products: products && products.data ? products.data : [],
-      productsTotalCount: productsTotalCount,
-      productsHasMore: productsHasMore,
-      productsMinPrice: productsMinPrice,
-      productsMaxPrice: productsMaxPrice,
-      productsAttributes: productsAttributes,
+      productsTotalCount,
+      productsHasMore,
+      productsMinPrice,
+      productsMaxPrice,
+      productsAttributes,
       paymentMethods: [],
       shippingMethods: [],
       loadingProducts: false,
@@ -230,7 +224,7 @@ export const loadState = (req, language) => {
 
   return Promise.all([
     getCurrentPage(req.path),
-    api.settings.retrieve().then(({ status, json }) => json),
+    api.settings.retrieve().then(({ json }) => json),
     themeLocales.getText(language),
     api.theme.placeholders.list()
   ]).then(([currentPage, settings, themeText, placeholdersResponse]) => {
@@ -245,8 +239,8 @@ export const loadState = (req, language) => {
         productFilter
       );
       return {
-        state: state,
-        themeText: themeText,
+        state,
+        themeText,
         placeholders: placeholdersResponse.json
       };
     });
