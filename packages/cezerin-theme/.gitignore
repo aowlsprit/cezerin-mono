@@ -1,0 +1,7 @@
+assets/js/app-*
+assets/js/theme-*
+assets/css/bundle-*
+assets/index.html
+assets/sw.js
+assets/precache-manifest.*.js
+dist/*
