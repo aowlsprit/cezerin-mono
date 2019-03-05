@@ -4,7 +4,7 @@ const initialState = {
   exportInProcess: false,
   installInProcess: false,
   settings: {
-    language: 'nl',
+    language: 'en',
     currency_code: 'EUR',
     currency_symbol: '€',
     currency_format: '€{amount}',

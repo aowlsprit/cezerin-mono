@@ -14,7 +14,7 @@ class SettingsService {
       domain: '',
       logo_file: 'assets/images/logo.png',
       logo: 'assets/images/logo.png',
-      language: 'nl',
+      language: 'en',
       currency_code: 'EUR',
       currency_symbol: '€',
       currency_format: '€{amount}',

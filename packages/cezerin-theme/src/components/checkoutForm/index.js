@@ -6,226 +6,226 @@ import CheckoutStepShipping from './stepShipping';
 import CheckoutStepPayment from './stepPayment';
 
 export default class CheckoutForm extends React.Component {
-	constructor(props) {
-		super(props);
-		const { location } = this.props;
-		const parsedLocation = queryString.parse(location.search);
+  constructor(props) {
+    super(props);
+    const { location } = this.props;
+    const parsedLocation = queryString.parse(location.search);
 
-		if (parsedLocation.source != null) {
-			this.state = {
-				step: 3,
-				parsedLocation
-			};
-		} else {
-			this.state = {
-				step: 1
-			};
-		}
-	}
+    if (parsedLocation.source != null) {
+      this.state = {
+        step: 3,
+        parsedLocation
+      };
+    } else {
+      this.state = {
+        step: 1
+      };
+    }
+  }
 
-	componentDidMount() {
-		const { loadShippingMethods, loadPaymentMethods } = this.props;
-		loadShippingMethods();
-		loadPaymentMethods();
-	}
+  componentDidMount() {
+    const { loadShippingMethods, loadPaymentMethods } = this.props;
+    loadShippingMethods();
+    loadPaymentMethods();
+  }
 
-	changeStep = step => {
-		this.setState({ step });
-	};
+  changeStep = step => {
+    this.setState({ step });
+  };
 
-	handleContactsSave = () => {
-		this.changeStep(2);
-	};
+  handleContactsSave = () => {
+    this.changeStep(2);
+  };
 
-	handleContactsEdit = () => {
-		this.changeStep(1);
-	};
+  handleContactsEdit = () => {
+    this.changeStep(1);
+  };
 
-	handleShippingSave = () => {
-		this.changeStep(3);
-	};
+  handleShippingSave = () => {
+    this.changeStep(3);
+  };
 
-	handleShippingEdit = () => {
-		this.changeStep(2);
-	};
+  handleShippingEdit = () => {
+    this.changeStep(2);
+  };
 
-	handleContactsSubmit = values => {
-		const { updateCart } = this.props;
-		updateCart({
-			email: values.email,
-			mobile: values.mobile
-		});
-		this.handleContactsSave();
-	};
+  handleContactsSubmit = values => {
+    const { updateCart } = this.props;
+    updateCart({
+      email: values.email,
+      mobile: values.mobile
+    });
+    this.handleContactsSave();
+  };
 
-	handleLocationSave = shippingLocation => {
-		const { updateCart, loadShippingMethods, loadPaymentMethods } = this.props;
-		updateCart(
-			{
-				shipping_address: shippingLocation,
-				billing_address: shippingLocation,
-				payment_method_id: null,
-				shipping_method_id: null
-			},
-			() => {
-				loadShippingMethods();
-				loadPaymentMethods();
-			}
-		);
-	};
+  handleLocationSave = shippingLocation => {
+    const { updateCart, loadShippingMethods, loadPaymentMethods } = this.props;
+    updateCart(
+      {
+        shipping_address: shippingLocation,
+        billing_address: shippingLocation,
+        payment_method_id: null,
+        shipping_method_id: null
+      },
+      () => {
+        loadShippingMethods();
+        loadPaymentMethods();
+      }
+    );
+  };
 
-	handleShippingMethodSave = shippingMethodId => {
-		const { updateCart, loadPaymentMethods } = this.props;
-		updateCart(
-			{
-				payment_method_id: null,
-				shipping_method_id: shippingMethodId
-			},
-			() => {
-				loadPaymentMethods();
-			}
-		);
-	};
+  handleShippingMethodSave = shippingMethodId => {
+    const { updateCart, loadPaymentMethods } = this.props;
+    updateCart(
+      {
+        payment_method_id: null,
+        shipping_method_id: shippingMethodId
+      },
+      () => {
+        loadPaymentMethods();
+      }
+    );
+  };
 
-	handlePaymentMethodSave = paymentMethodId => {
-		const { updateCart } = this.props;
-		updateCart({
-			payment_method_id: paymentMethodId
-		});
-	};
+  handlePaymentMethodSave = paymentMethodId => {
+    const { updateCart } = this.props;
+    updateCart({
+      payment_method_id: paymentMethodId
+    });
+  };
 
-	isShowPaymentForm = () => {
-		const { state } = this.props;
-		const { payment_method_gateway: paymentMethodGateway } = state.cart;
-		const paymentGatewayExists =
-			paymentMethodGateway && paymentMethodGateway !== '';
-		return paymentGatewayExists;
-	};
+  isShowPaymentForm = () => {
+    const { state } = this.props;
+    const { payment_method_gateway: paymentMethodGateway } = state.cart;
+    const paymentGatewayExists =
+      paymentMethodGateway && paymentMethodGateway !== '';
+    return paymentGatewayExists;
+  };
 
-	handleShippingSubmit = values => {
-		if (this.isShowPaymentForm()) {
-			const { shipping_address, billing_address, comments } = values;
+  handleShippingSubmit = values => {
+    if (this.isShowPaymentForm()) {
+      const { shipping_address, billing_address, comments } = values;
 
-			this.props.updateCart({
-				shipping_address,
-				billing_address,
-				comments
-			});
-			this.handleShippingSave();
-		} else {
-			this.props.checkout(values);
-		}
-	};
+      this.props.updateCart({
+        shipping_address,
+        billing_address,
+        comments
+      });
+      this.handleShippingSave();
+    } else {
+      this.props.checkout(values);
+    }
+  };
 
-	handleSuccessPayment = () => {
-		this.props.checkout(null);
-	};
+  handleSuccessPayment = () => {
+    this.props.checkout(null);
+  };
 
-	handleCheckoutWithToken = tokenId => {
-		this.props.updateCart(
-			{
-				payment_token: tokenId
-			},
-			cart => {
-				this.props.checkout(null);
-			}
-		);
-	};
+  handleCheckoutWithToken = tokenId => {
+    this.props.updateCart(
+      {
+        payment_token: tokenId
+      },
+      cart => {
+        this.props.checkout(null);
+      }
+    );
+  };
 
-	render() {
-		const { step } = this.state;
+  render() {
+    const { step } = this.state;
 
-		const {
-			settings,
-			cart,
-			paymentMethods,
-			shippingMethods,
-			loadingShippingMethods,
-			loadingPaymentMethods,
-			checkoutFields,
-			processingCheckout
-		} = this.props.state;
+    const {
+      settings,
+      cart,
+      paymentMethods,
+      shippingMethods,
+      loadingShippingMethods,
+      loadingPaymentMethods,
+      checkoutFields,
+      processingCheckout
+    } = this.props.state;
 
-		settings.paymentPending = {
-			parsedLocation: this.state.parsedLocation
-		};
+    settings.paymentPending = {
+      parsedLocation: this.state.parsedLocation
+    };
 
-		const {
-			checkoutInputClass = 'checkout-field',
-			checkoutButtonClass = 'checkout-button',
-			checkoutEditButtonClass = 'checkout-button-edit'
-		} = themeSettings;
+    const {
+      checkoutInputClass = 'checkout-field',
+      checkoutButtonClass = 'checkout-button',
+      checkoutEditButtonClass = 'checkout-button-edit'
+    } = themeSettings;
 
-		if (cart && cart.items.length > 0) {
-			const showPaymentForm = this.isShowPaymentForm();
+    if (cart && cart.items.length > 0) {
+      const showPaymentForm = this.isShowPaymentForm();
 
-			let shippingMethod = null;
-			const { shipping_method_id } = cart;
-			if (shipping_method_id && shippingMethods && shippingMethods.length > 0) {
-				shippingMethod = shippingMethods.find(
-					method => method.id === shipping_method_id
-				);
-			}
+      let shippingMethod = null;
+      const { shipping_method_id } = cart;
+      if (shipping_method_id && shippingMethods && shippingMethods.length > 0) {
+        shippingMethod = shippingMethods.find(
+          method => method.id === shipping_method_id
+        );
+      }
 
-			return (
-				<div className="checkout-form">
-					<CheckoutStepContacts
-						isReadOnly={step > 1}
-						title={text.customerDetails}
-						inputClassName={checkoutInputClass}
-						buttonClassName={checkoutButtonClass}
-						editButtonClassName={checkoutEditButtonClass}
-						initialValues={cart}
-						settings={settings}
-						paymentMethods={paymentMethods}
-						shippingMethods={shippingMethods}
-						loadingShippingMethods={loadingShippingMethods}
-						loadingPaymentMethods={loadingPaymentMethods}
-						checkoutFields={checkoutFields}
-						onEdit={this.handleContactsEdit}
-						onSubmit={this.handleContactsSubmit}
-						saveShippingLocation={this.handleLocationSave}
-						saveShippingMethod={this.handleShippingMethodSave}
-						savePaymentMethod={this.handlePaymentMethodSave}
-					/>
+      return (
+        <div className="checkout-form">
+          <CheckoutStepContacts
+            isReadOnly={step > 1}
+            title={text.customerDetails}
+            inputClassName={checkoutInputClass}
+            buttonClassName={checkoutButtonClass}
+            editButtonClassName={checkoutEditButtonClass}
+            initialValues={cart}
+            settings={settings}
+            paymentMethods={paymentMethods}
+            shippingMethods={shippingMethods}
+            loadingShippingMethods={loadingShippingMethods}
+            loadingPaymentMethods={loadingPaymentMethods}
+            checkoutFields={checkoutFields}
+            onEdit={this.handleContactsEdit}
+            onSubmit={this.handleContactsSubmit}
+            saveShippingLocation={this.handleLocationSave}
+            saveShippingMethod={this.handleShippingMethodSave}
+            savePaymentMethod={this.handlePaymentMethodSave}
+          />
 
-					<CheckoutStepShipping
-						show={step >= 2}
-						isReadOnly={step > 2}
-						title={text.shipping}
-						inputClassName={checkoutInputClass}
-						buttonClassName={checkoutButtonClass}
-						editButtonClassName={checkoutEditButtonClass}
-						initialValues={cart}
-						settings={settings}
-						processingCheckout={processingCheckout}
-						shippingMethod={shippingMethod}
-						checkoutFields={checkoutFields}
-						showPaymentForm={showPaymentForm}
-						onSave={this.handleShippingSave}
-						onEdit={this.handleShippingEdit}
-						onSubmit={this.handleShippingSubmit}
-					/>
+          <CheckoutStepShipping
+            show={step >= 2}
+            isReadOnly={step > 2}
+            title={text.shipping}
+            inputClassName={checkoutInputClass}
+            buttonClassName={checkoutButtonClass}
+            editButtonClassName={checkoutEditButtonClass}
+            initialValues={cart}
+            settings={settings}
+            processingCheckout={processingCheckout}
+            shippingMethod={shippingMethod}
+            checkoutFields={checkoutFields}
+            showPaymentForm={showPaymentForm}
+            onSave={this.handleShippingSave}
+            onEdit={this.handleShippingEdit}
+            onSubmit={this.handleShippingSubmit}
+          />
 
-					{showPaymentForm && (
-						<CheckoutStepPayment
-							show={step === 3}
-							title={text.payment}
-							inputClassName={checkoutInputClass}
-							buttonClassName={checkoutButtonClass}
-							cart={cart}
-							settings={settings}
-							processingCheckout={processingCheckout}
-							handleSuccessPayment={this.handleSuccessPayment}
-							onCreateToken={this.handleCheckoutWithToken}
-						/>
-					)}
-					{/* 
-					{step === 4 && <p> Pending order confirmation </p>} */}
-				</div>
-			);
-		} else {
-			return <p>{text.emptyCheckout}</p>;
-		}
-	}
+          {showPaymentForm && (
+            <CheckoutStepPayment
+              show={step === 3}
+              title={text.payment}
+              inputClassName={checkoutInputClass}
+              buttonClassName={checkoutButtonClass}
+              cart={cart}
+              settings={settings}
+              processingCheckout={processingCheckout}
+              handleSuccessPayment={this.handleSuccessPayment}
+              onCreateToken={this.handleCheckoutWithToken}
+            />
+          )}
+          {/* 
+          {step === 4 && <p> Pending order confirmation </p>} */}
+        </div>
+      );
+    } else {
+      return <p>{text.emptyCheckout}</p>;
+    }
+  }
 }

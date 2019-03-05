@@ -59,7 +59,7 @@ module.exports = {
   themeAssetsUploadUrl: '../cezerin-theme/assets/images',
 
   // store UI language
-  language: 'nl',
+  language: 'en',
 
   // used by API
   orderStartNumber: 1000,
