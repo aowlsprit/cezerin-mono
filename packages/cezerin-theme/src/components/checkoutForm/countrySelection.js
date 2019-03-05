@@ -1,4 +1,5 @@
 import React from 'react';
+import COUNTRIES from './countries';
 
 const CountrySelection = field => (
   <div className={field.className}>
@@ -15,9 +16,11 @@ const CountrySelection = field => (
       id={field.id}
       className={field.meta.touched && field.meta.error ? 'invalid' : ''}
     >
-      <option value="BE">Belgie</option>
-      <option value="NL">Nederland</option>
-      <option value="Other">Andere</option>
+      {Object.keys(COUNTRIES).map(item => (
+        <option key={`country-${item}`} value={item}>
+          {item} - {COUNTRIES[item]}
+        </option>
+      ))}
     </select>
   </div>
 );
