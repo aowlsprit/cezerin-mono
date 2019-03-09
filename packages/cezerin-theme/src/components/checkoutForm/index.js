@@ -97,8 +97,7 @@ export default class CheckoutForm extends React.Component {
   isShowPaymentForm = () => {
     const { state } = this.props;
     const { payment_method_gateway: paymentMethodGateway } = state.cart;
-    const paymentGatewayExists =
-      paymentMethodGateway && paymentMethodGateway !== '';
+    const paymentGatewayExists = paymentMethodGateway && paymentMethodGateway !== '';
     return paymentGatewayExists;
   };
 
@@ -162,9 +161,7 @@ export default class CheckoutForm extends React.Component {
       let shippingMethod = null;
       const { shipping_method_id } = cart;
       if (shipping_method_id && shippingMethods && shippingMethods.length > 0) {
-        shippingMethod = shippingMethods.find(
-          method => method.id === shipping_method_id
-        );
+        shippingMethod = shippingMethods.find(method => method.id === shipping_method_id);
       }
 
       return (
@@ -220,12 +217,9 @@ export default class CheckoutForm extends React.Component {
               onCreateToken={this.handleCheckoutWithToken}
             />
           )}
-          {/* 
-          {step === 4 && <p> Pending order confirmation </p>} */}
         </div>
       );
-    } else {
-      return <p>{text.emptyCheckout}</p>;
     }
+    return <p>{text.emptyCheckout}</p>;
   }
 }

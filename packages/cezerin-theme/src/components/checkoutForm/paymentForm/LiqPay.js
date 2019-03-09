@@ -2,65 +2,61 @@ import React from 'react';
 
 let scriptAdded = false;
 export default class PayPalButton extends React.Component {
-	constructor(props) {
-		super(props);
-	}
+  componentDidMount() {
+    this.addScript();
+  }
 
-	addScript = () => {
-		if (scriptAdded) {
-			this.executeScript();
-			return;
-		}
+  componentDidUpdate() {
+    this.executeScript();
+  }
 
-		const SCRIPT_URL = 'https://static.liqpay.ua/libjs/checkout.js';
-		const container = document.body || document.head;
-		const script = document.createElement('script');
-		script.src = SCRIPT_URL;
-		script.onload = () => {
-			this.executeScript();
-		};
-		container.appendChild(script);
-		scriptAdded = true;
-	};
+  addScript = () => {
+    if (scriptAdded) {
+      this.executeScript();
+      return;
+    }
 
-	executeScript = () => {
-		const { formSettings, shopSettings, onPayment } = this.props;
+    const SCRIPT_URL = 'https://static.liqpay.ua/libjs/checkout.js';
+    const container = document.body || document.head;
+    const script = document.createElement('script');
+    script.src = SCRIPT_URL;
+    script.onload = () => {
+      this.executeScript();
+    };
+    container.appendChild(script);
+    scriptAdded = true;
+  };
 
-		LiqPayCheckout.init({
-			data: formSettings.data,
-			signature: formSettings.signature,
-			language: formSettings.language,
-			embedTo: '#liqpay_checkout',
-			mode: 'embed'
-		})
-			.on('liqpay.callback', function(data) {
-				if (data.status === 'success') {
-					onPayment();
-				}
-			})
-			.on('liqpay.ready', function(data) {
-				// ready
-			})
-			.on('liqpay.close', function(data) {
-				// close
-			});
-	};
+  executeScript = () => {
+    const { formSettings, shopSettings, onPayment } = this.props;
 
-	componentDidMount() {
-		this.addScript();
-	}
+    LiqPayCheckout.init({
+      data: formSettings.data,
+      signature: formSettings.signature,
+      language: formSettings.language,
+      embedTo: '#liqpay_checkout',
+      mode: 'embed'
+    })
+      .on('liqpay.callback', data => {
+        if (data.status === 'success') {
+          onPayment();
+        }
+      })
+      .on('liqpay.ready', () => {
+        // ready
+      })
+      .on('liqpay.close', () => {
+        // close
+      });
+  };
 
-	componentDidUpdate() {
-		this.executeScript();
-	}
+  render() {
+    const { formSettings, shopSettings, onPayment } = this.props;
 
-	render() {
-		const { formSettings, shopSettings, onPayment } = this.props;
-
-		return (
-			<div>
-				<div id="liqpay_checkout" />
-			</div>
-		);
-	}
+    return (
+      <div>
+        <div id="liqpay_checkout" />
+      </div>
+    );
+  }
 }

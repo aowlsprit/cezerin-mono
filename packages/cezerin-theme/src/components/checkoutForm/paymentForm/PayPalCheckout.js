@@ -2,139 +2,135 @@ import React from 'react';
 
 let scriptAdded = false;
 export default class PayPalButton extends React.Component {
-	constructor(props) {
-		super(props);
-	}
+  componentDidMount() {
+    this.addScript();
+  }
 
-	addScript = () => {
-		if (scriptAdded) {
-			this.executeScript();
-			return;
-		}
+  componentDidUpdate() {
+    this.executeScript();
+  }
 
-		const SCRIPT_URL = 'https://www.paypalobjects.com/api/checkout.min.js';
-		const container = document.body || document.head;
-		const script = document.createElement('script');
-		script.src = SCRIPT_URL;
-		script.onload = () => {
-			this.executeScript();
-		};
-		container.appendChild(script);
-		scriptAdded = true;
-	};
+  addScript = () => {
+    if (scriptAdded) {
+      this.executeScript();
+      return;
+    }
 
-	executeScript = () => {
-		const { formSettings, shopSettings, onPayment } = this.props;
+    const SCRIPT_URL = 'https://www.paypalobjects.com/api/checkout.min.js';
+    const container = document.body || document.head;
+    const script = document.createElement('script');
+    script.src = SCRIPT_URL;
+    script.onload = () => {
+      this.executeScript();
+    };
+    container.appendChild(script);
+    scriptAdded = true;
+  };
 
-		document.getElementById('paypal-button-container').innerHTML = null;
+  executeScript = () => {
+    const { formSettings, shopSettings, onPayment } = this.props;
 
-		paypal.Button.render(
-			{
-				// Set your environment
-				env: formSettings.env, // sandbox | production
+    document.getElementById('paypal-button-container').innerHTML = null;
 
-				// Specify the style of the button
-				style: {
-					label: 'pay',
-					size: formSettings.size,
-					shape: formSettings.shape,
-					color: formSettings.color
-				},
-				client: {
-					sandbox: formSettings.client,
-					production: formSettings.client
-				},
-				// Wait for the PayPal button to be clicked
-				payment: function(data, actions) {
-					return actions.payment.create({
-						payment: {
-							intent: 'sale',
-							transactions: [
-								{
-									custom: formSettings.order_id,
-									notify_url: formSettings.notify_url,
-									amount: {
-										total: formSettings.amount,
-										currency: formSettings.currency
-									}
-								}
-							]
-						},
-						experience: {
-							input_fields: { no_shipping: 1 }
-						}
-					});
-				},
-				// Wait for the payment to be authorized by the customer
+    paypal.Button.render(
+      {
+        // Set your environment
+        env: formSettings.env, // sandbox | production
 
-				onAuthorize: function(data, actions) {
-					// Get the payment details
+        // Specify the style of the button
+        style: {
+          label: 'pay',
+          size: formSettings.size,
+          shape: formSettings.shape,
+          color: formSettings.color
+        },
+        client: {
+          sandbox: formSettings.client,
+          production: formSettings.client
+        },
+        // Wait for the PayPal button to be clicked
+        payment: function(data, actions) {
+          return actions.payment.create({
+            payment: {
+              intent: 'sale',
+              transactions: [
+                {
+                  custom: formSettings.order_id,
+                  notify_url: formSettings.notify_url,
+                  amount: {
+                    total: formSettings.amount,
+                    currency: formSettings.currency
+                  }
+                }
+              ]
+            },
+            experience: {
+              input_fields: { no_shipping: 1 }
+            }
+          });
+        },
+        // Wait for the payment to be authorized by the customer
 
-					return actions.payment.get().then(function(data) {
-						if (
-							data.state.toLowerCase() === 'created' &&
-							data.payer.status.toLowerCase() === 'verified'
-						) {
-							// Display a confirmation button
-							document.querySelector('#paypal-button-container').style.display =
-								'none';
-							document.querySelector('#confirm').style.display = 'block';
+        onAuthorize: function(data, actions) {
+          // Get the payment details
 
-							// Listen for click on confirm button
+          return actions.payment.get().then(function(data) {
+            if (
+              data.state.toLowerCase() === 'created' &&
+              data.payer.status.toLowerCase() === 'verified'
+            ) {
+              // Display a confirmation button
+              document.querySelector('#paypal-button-container').style.display =
+                'none';
+              document.querySelector('#confirm').style.display = 'block';
 
-							document
-								.querySelector('#confirmButton')
-								.addEventListener('click', function() {
-									// Disable the button and show a loading indicator
+              // Listen for click on confirm button
 
-									document.querySelector('#confirmButton').innerText = '';
-									document.querySelector('#confirmButton').className =
-										'loading-process';
-									document.querySelector('#confirm').disabled = true;
+              document
+                .querySelector('#confirmButton')
+                .addEventListener('click', function() {
+                  // Disable the button and show a loading indicator
 
-									// Execute the payment
+                  document.querySelector('#confirmButton').innerText = '';
+                  document.querySelector('#confirmButton').className =
+                    'loading-process';
+                  document.querySelector('#confirm').disabled = true;
 
-									return actions.payment.execute().then(function(res) {
-										if (res.state.toLowerCase() === 'approved') {
-											onPayment();
-										}
-									});
-								});
-						}
-					});
-				}
-			},
-			'#paypal-button-container'
-		);
-	};
+                  // Execute the payment
 
-	componentDidMount() {
-		this.addScript();
-	}
+                  return actions.payment.execute().then(function(res) {
+                    if (res.state.toLowerCase() === 'approved') {
+                      onPayment();
+                    }
+                  });
+                });
+            }
+          });
+        }
+      },
+      '#paypal-button-container'
+    );
+  };
 
-	componentDidUpdate() {
-		this.executeScript();
-	}
+  render() {
+    const { formSettings, shopSettings, onPayment } = this.props;
 
-	render() {
-		const { formSettings, shopSettings, onPayment } = this.props;
-
-		return (
-			<div>
-				<div id="paypal-button-container" />
-				<div
-					id="confirm"
-					className="checkout-button-wrap"
-					style={{ display: 'none' }}
-				>
-					<button
-						id="confirmButton"
-						className="checkout-button button confirm-checkout is-primary"
-					>
-						Confirm
-					</button>
-				</div>
-			</div>
-		);
-	}
+    return (
+      <div>
+        <div id="paypal-button-container" />
+        <div
+          id="confirm"
+          className="checkout-button-wrap"
+          style={{ display: 'none' }}
+        >
+          <button
+            id="confirmButton"
+            className="checkout-button button confirm-checkout is-primary"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    );
+  }
 }

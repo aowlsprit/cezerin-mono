@@ -17,8 +17,8 @@ const getPaymentFormSettings = options => {
 const processOrderPayment = async ({ order, gatewaySettings, settings }) => {
   try {
     const stripe = stripePackage(gatewaySettings.secret_key);
-    console.log('>>> chargin stripe');
     let charge = null;
+    console.log(`Charging Stripe source ${order.payment_token} for ${order.id}`);
     try {
       charge = await stripe.charges.create({
         amount: order.grand_total * 100,
@@ -30,16 +30,15 @@ const processOrderPayment = async ({ order, gatewaySettings, settings }) => {
         source: order.payment_token
       });
     } catch (err) {
-      console.log('>>> err', err);
+      console.error('Error charging source', err);
     }
 
-    console.log('>>> chargin done');
+    console.log(`Charge ${charge}`);
 
-    console.log(charge);
+    console.log(`Stripe charge ${charge.status}`);
 
     // status: succeeded, pending, failed
-    const paymentSucceeded =
-      charge.status === 'succeeded' || charge.paid === true;
+    const paymentSucceeded = charge.status === 'succeeded' || charge.paid === true;
 
     if (paymentSucceeded) {
       await OrdersService.updateOrder(order.id, {

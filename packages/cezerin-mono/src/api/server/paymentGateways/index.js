@@ -7,95 +7,99 @@ import StripeElements from './StripeElements';
 import StripeBancontact from './StripeBancontact';
 
 const getOptions = orderId => {
-	return Promise.all([
-		OrdersService.getSingleOrder(orderId),
-		SettingsService.getSettings()
-	]).then(([order, settings]) => {
-		if (order && order.payment_method_id) {
-			return PaymentGatewaysService.getGateway(
-				order.payment_method_gateway
-			).then(gatewaySettings => {
-				const options = {
-					gateway: order.payment_method_gateway,
-					gatewaySettings: gatewaySettings,
-					order: order,
-					amount: order.grand_total,
-					currency: settings.currency_code
-				};
+  return Promise.all([
+    OrdersService.getSingleOrder(orderId),
+    SettingsService.getSettings()
+  ]).then(([order, settings]) => {
+    if (order && order.payment_method_id) {
+      return PaymentGatewaysService.getGateway(
+        order.payment_method_gateway
+      ).then(gatewaySettings => {
+        const options = {
+          gateway: order.payment_method_gateway,
+          gatewaySettings: gatewaySettings,
+          order: order,
+          amount: order.grand_total,
+          currency: settings.currency_code
+        };
 
-				return options;
-			});
-		}
-	});
+        return options;
+      });
+    }
+  });
 };
 
 const getPaymentFormSettings = orderId => {
-	return getOptions(orderId).then(options => {
-		switch (options.gateway) {
-			case 'paypal-checkout':
-				return PayPalCheckout.getPaymentFormSettings(options);
-			case 'liqpay':
-				return LiqPay.getPaymentFormSettings(options);
-			case 'stripe-elements':
-				return StripeElements.getPaymentFormSettings(options);
-			case 'stripe-bancontact':
-				return StripeBancontact.getPaymentFormSettings(options);
-			default:
-				return Promise.reject('Invalid gateway');
-		}
-	});
+  return getOptions(orderId).then(options => {
+    switch (options.gateway) {
+      case 'paypal-checkout':
+        return PayPalCheckout.getPaymentFormSettings(options);
+      case 'liqpay':
+        return LiqPay.getPaymentFormSettings(options);
+      case 'stripe-elements':
+        return StripeElements.getPaymentFormSettings(options);
+      case 'stripe-bancontact':
+        return StripeBancontact.getPaymentFormSettings(options);
+      default:
+        return Promise.reject('Invalid gateway');
+    }
+  });
 };
 
 const paymentNotification = (req, res, gateway) => {
-	return PaymentGatewaysService.getGateway(gateway).then(gatewaySettings => {
-		const options = {
-			gateway: gateway,
-			gatewaySettings: gatewaySettings,
-			req: req,
-			res: res
-		};
+  return PaymentGatewaysService.getGateway(gateway).then(gatewaySettings => {
+    const options = {
+      gateway,
+      gatewaySettings,
+      req,
+      res
+    };
 
-		switch (gateway) {
-			case 'paypal-checkout':
-				return PayPalCheckout.paymentNotification(options);
-			case 'liqpay':
-				return LiqPay.paymentNotification(options);
-			default:
-				return Promise.reject('Invalid gateway');
-		}
-	});
+    switch (gateway) {
+      case 'paypal-checkout':
+        return PayPalCheckout.paymentNotification(options);
+      case 'liqpay':
+        return LiqPay.paymentNotification(options);
+      default:
+        return Promise.reject('Invalid gateway');
+    }
+  });
 };
 
 const processOrderPayment = async order => {
-	const orderAlreadyCharged = order.paid === true;
-	if (orderAlreadyCharged) {
-		return true;
-	}
+  const orderAlreadyCharged = order.paid === true;
+  console.log('>>> HERE?');
+  if (orderAlreadyCharged) {
+    console.log('>>> alreadyCharged?', orderAlreadyCharged);
+    return true;
+  }
 
-	const gateway = order.payment_method_gateway;
-	const gatewaySettings = await PaymentGatewaysService.getGateway(gateway);
-	const settings = await SettingsService.getSettings();
+  const gateway = order.payment_method_gateway;
+  const gatewaySettings = await PaymentGatewaysService.getGateway(gateway);
+  const settings = await SettingsService.getSettings();
 
-	switch (gateway) {
-		case 'stripe-elements':
-			return StripeElements.processOrderPayment({
-				order,
-				gatewaySettings,
-				settings
-			});
-		case 'stripe-bancontact':
-			return StripeBancontact.processOrderPayment({
-				order,
-				gatewaySettings,
-				settings
-			});
-		default:
-			return Promise.reject('Invalid gateway');
-	}
+  console.log('>>> HERE?');
+  switch (gateway) {
+    case 'stripe-elements':
+      return StripeElements.processOrderPayment({
+        order,
+        gatewaySettings,
+        settings
+      });
+    case 'stripe-bancontact':
+      console.log('>>> GOT HERE', order.id);
+      return StripeBancontact.processOrderPayment({
+        order,
+        gatewaySettings,
+        settings
+      });
+    default:
+      return Promise.reject('Invalid gateway');
+  }
 };
 
 export default {
-	getPaymentFormSettings: getPaymentFormSettings,
-	paymentNotification: paymentNotification,
-	processOrderPayment: processOrderPayment
+  getPaymentFormSettings,
+  paymentNotification,
+  processOrderPayment
 };

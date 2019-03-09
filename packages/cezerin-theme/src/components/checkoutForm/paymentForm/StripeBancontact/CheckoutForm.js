@@ -5,44 +5,55 @@ class CheckoutForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      inProgress: false
+      inProgress: false,
+      stripeStatus: null
     };
     this.submit = this.submit.bind(this);
   }
 
   componentDidMount() {
     const {
-      onCreateToken,
-      shopSettings: { paymentPending }
+      shopSettings: { paymentPending },
+      onPayment
     } = this.props;
 
     if (paymentPending != null && paymentPending.parsedLocation != null) {
       this.setState({ inProgress: true });
-      setTimeout(() => {
+      const pollPayment = setInterval(() => {
         const { stripe } = this.props;
+        const sourceId =
+          typeof paymentPending.parsedLocation.source === 'string'
+            ? paymentPending.parsedLocation.source
+            : paymentPending.parsedLocation.source.pop();
+        const clientSecret =
+          typeof paymentPending.parsedLocation.client_secret === 'string'
+            ? paymentPending.parsedLocation.client_secret
+            : paymentPending.parsedLocation.client_secret.pop();
         stripe
           .retrieveSource({
-            id: paymentPending.parsedLocation.source,
-            client_secret: paymentPending.parsedLocation.client_secret
+            id: sourceId,
+            client_secret: clientSecret
           })
           .then(result => {
-            if (result.source.status === 'chargeable') {
-              onCreateToken(result.source.id);
+            console.log(result.source.status);
+            if (result.source.status === 'consumed') {
+              clearInterval(pollPayment);
+              onPayment();
             } else {
-              alert('Was not able to bill you.');
+              clearInterval(pollPayment);
+              this.setState({ stripeStatus: 'Payment failed' });
+              this.setState({ inProgress: false });
             }
           });
-      }, 2000);
+      }, 1000);
     }
   }
 
   async submit() {
     this.setState({ inProgress: true });
-    const {
-      formSettings: { amount, email },
-      stripe,
-      shopSettings
-    } = this.props;
+    const { formSettings, stripe, shopSettings } = this.props;
+    const { amount, email, order_id: orderId } = formSettings;
+
     const { source } = await stripe.createSource({
       type: 'bancontact',
       amount: amount * 100,
@@ -51,10 +62,13 @@ class CheckoutForm extends React.Component {
         name: email,
         email
       },
+      metadata: {
+        orderId
+      },
       redirect: {
         return_url: window.location.href
       },
-      statement_descriptor: 'Stripe Payments Demo'
+      statement_descriptor: `#${email}-${orderId}`
     });
     if (source.redirect.url != null) {
       window.location.replace(source.redirect.url);
@@ -62,7 +76,7 @@ class CheckoutForm extends React.Component {
   }
 
   render() {
-    const { inProgress } = this.state;
+    const { inProgress, stripeStatus } = this.state;
     return (
       <div>
         <div className="checkout-button-wrap">
@@ -70,12 +84,11 @@ class CheckoutForm extends React.Component {
             type="button"
             onClick={this.submit}
             disabled={inProgress}
-            className={`checkout-button button is-primary${
-              inProgress ? ' is-loading' : ''
-            }`}
+            className={`checkout-button button is-primary${inProgress ? ' is-loading' : ''}`}
           >
             Naar Bancontact
           </button>
+          <p> {stripeStatus} </p>
         </div>
       </div>
     );
