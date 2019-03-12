@@ -38,7 +38,7 @@
     "url": "https://github.com/cezerin2/client"
   },
   "scripts": {
-    "build": "babel src -d lib",
+    "build": "babel src -d lib --quiet",
     "prepublishOnly": "npm run build",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",

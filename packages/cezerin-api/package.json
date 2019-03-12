@@ -1,5 +1,5 @@
 {
-  "name": "@aowlsprit/cezerin-mono",
+  "name": "@aowlsprit/cezerin-api",
   "version": "0.0.0",
   "description": "Cezerin2 is React and Node.js based eCommerce platform. https://cezerin.com",
   "keywords": [
@@ -37,20 +37,12 @@
     "url": "https://github.com/cezerin2/cezerin2"
   },
   "scripts": {
-    "setup": "node -r esm src/api/server/setup.js",
-    "compile": "babel src/store -d dist/store --presets react --plugins transform-class-properties --quiet",
-    "compile:watch": "concurrently -n storeWatcher\"babel src/store -d dist/store --presets react --plugins transform-class-properties --watch\"",
-    "webpack:admin": "webpack --config webpack.config.admin.js --mode production",
-    "webpack:store": "webpack --config webpack.config.store.js --mode production",
-    "webpack:admin:watch": "webpack --config webpack.config.admin.js --mode development --watch",
-    "webpack:store:watch": "webpack --config webpack.config.store.js --mode development --watch",
-    "build": "yarn run compile && yarn run webpack:store && yarn run webpack:admin",
-    "build:watch": "concurrently -n compile,webpackStore,webpackAdmin \"yarn run compile:watch\" \"yarn run webpack:store:watch\" \"yarn run webpack:admin:watch\"",
+    "setup": "node -r esm src/setup.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --write \"src/**/*.js\"",
     "precommit": "lint-staged",
-    "start": "node -r esm dist/store/server/index.js"
+    "start": "node -r esm src/index.js"
   },
   "lint-staged": {
     "*.js": [

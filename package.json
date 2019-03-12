@@ -10,7 +10,9 @@
     "packages/*"
   ],
   "scripts": {
-    "start:mono": "cd packages/cezerin-mono && yarn start",
+    "setup": "cd packages/cezerin-api && yarn setup",
+    "start:api": "cd packages/cezerin-api && yarn start",
+    "start:ssr": "cd packages/cezerin-mono && yarn start",
     "start": "run-p 'start:*'",
     "clean-deps": "rimraf packages/*/node_modules/ && rimraf node_modules/",
     "cleanall": "yarn run clean && yarn run clean-deps",
