@@ -5,7 +5,8 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import winston from 'winston';
 import settings from '../../../config/server';
-// import logger from './logger';
+// eslint-disable-next-line no-unused-vars
+import logger from './logger';
 import robotsRendering from './robotsRendering';
 import sitemapRendering from './sitemapRendering';
 import redirects from './redirects';
