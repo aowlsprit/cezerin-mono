@@ -41,13 +41,13 @@ const getPaymentFormSettings = orderId => {
       case 'stripe-bancontact':
         return StripeBancontact.getPaymentFormSettings(options);
       default:
-        return Promise.reject('Invalid gateway');
+        return Promise.reject(new Error('Invalid gateway'));
     }
   });
 };
 
-const paymentNotification = (req, res, gateway) => {
-  return PaymentGatewaysService.getGateway(gateway).then(gatewaySettings => {
+const paymentNotification = (req, res, gateway) =>
+  PaymentGatewaysService.getGateway(gateway).then(gatewaySettings => {
     const options = {
       gateway,
       gatewaySettings,
@@ -61,16 +61,13 @@ const paymentNotification = (req, res, gateway) => {
       case 'liqpay':
         return LiqPay.paymentNotification(options);
       default:
-        return Promise.reject('Invalid gateway');
+        return Promise.reject(new Error('Invalid gateway'));
     }
   });
-};
 
 const processOrderPayment = async order => {
   const orderAlreadyCharged = order.paid === true;
-  console.log('>>> HERE?');
   if (orderAlreadyCharged) {
-    console.log('>>> alreadyCharged?', orderAlreadyCharged);
     return true;
   }
 
@@ -78,7 +75,6 @@ const processOrderPayment = async order => {
   const gatewaySettings = await PaymentGatewaysService.getGateway(gateway);
   const settings = await SettingsService.getSettings();
 
-  console.log('>>> HERE?');
   switch (gateway) {
     case 'stripe-elements':
       return StripeElements.processOrderPayment({
@@ -87,14 +83,13 @@ const processOrderPayment = async order => {
         settings
       });
     case 'stripe-bancontact':
-      console.log('>>> GOT HERE', order.id);
       return StripeBancontact.processOrderPayment({
         order,
         gatewaySettings,
         settings
       });
     default:
-      return Promise.reject('Invalid gateway');
+      return Promise.reject(new Error('Invalid gateway'));
   }
 };
 

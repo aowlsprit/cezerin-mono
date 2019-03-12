@@ -1,18 +1,18 @@
-import CezerinClient from 'cezerin2-client';
+import CezerinClient from '@aowlsprit/cezerin-client';
 import settings from 'lib/settings';
 
 let api = null;
-let dashboardToken = localStorage.getItem('dashboard_token');
-let webstoreToken = localStorage.getItem('webstore_token');
+const dashboardToken = localStorage.getItem('dashboard_token');
+const webstoreToken = localStorage.getItem('webstore_token');
 
 const DEVELOPER_MODE = settings.developerMode === true;
 
 if (dashboardToken || DEVELOPER_MODE === true) {
-	api = new CezerinClient({
-		apiBaseUrl: settings.apiBaseUrl || '/api/v1',
-		apiToken: dashboardToken,
-		webstoreToken: webstoreToken
-	});
+  api = new CezerinClient({
+    apiBaseUrl: settings.apiBaseUrl || '/api/v1',
+    apiToken: dashboardToken,
+    webstoreToken
+  });
 }
 
 export default api;

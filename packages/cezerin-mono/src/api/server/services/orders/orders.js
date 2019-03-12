@@ -710,9 +710,7 @@ class OrdersService {
       date_cancelled: new Date()
     };
 
-    return ProductStockService.handleCancelOrder(orderId).then(() =>
-      this.updateOrder(orderId, orderData)
-    );
+    return ProductStockService.handleCancelOrder(orderId).then(() => this.updateOrder(orderId, orderData));
   }
 
   closeOrder(orderId) {
@@ -741,11 +739,7 @@ class OrdersService {
           });
         }
 
-        return CustomersService.updateCustomerStatistics(
-          customerId,
-          totalSpent,
-          ordersCount
-        );
+        return CustomersService.updateCustomerStatistics(customerId, totalSpent, ordersCount);
       });
     }
     return null;
@@ -759,9 +753,7 @@ class OrdersService {
 
   async chargeOrderWithSource(orderId, sourceId) {
     const order = await this.getSingleOrder(orderId);
-    console.log('>>> chargeOrderWithSource', order.id, order.payment_method_gateway);
     Object.assign(order, { payment_token: sourceId });
-    console.log('>>> chargeOrderWithSource post-assign', order.id, order.payment_method_gateway);
     const isSuccess = await PaymentGateways.processOrderPayment(order);
     return isSuccess;
   }
