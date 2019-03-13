@@ -94,7 +94,7 @@ references:
       # trailing / on workspace needed to 'merge' files into working directory
       command: rsync -rvt "$WORKSPACE_DIR/" .
       environment:
-        WORKSPACE_DIR: *workspace-director
+        WORKSPACE_DIR: *workspace-directory
 
 jobs:
   build:
