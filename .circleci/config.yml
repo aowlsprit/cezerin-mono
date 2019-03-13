@@ -112,6 +112,7 @@ jobs:
     <<: *container-config
     steps:
       - *step-checkout-code
+      - *step-remove-system-yarn
       - *step-install-yarn
       - *step-install-yarn-dependencies
       - *step-yarn-build
