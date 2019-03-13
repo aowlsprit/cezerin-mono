@@ -17,7 +17,12 @@
     "clean-deps": "rimraf packages/*/node_modules/ && rimraf node_modules/",
     "cleanall": "yarn run clean && yarn run clean-deps",
     "clean": "lerna run clean",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "test": "lerna run test"
+  },
+  "engines": {
+    "node": ">=8.10.0",
+    "yarn": ">=1.13.0"
   },
   "devDependencies": {
     "lerna": "^3.13.1",
