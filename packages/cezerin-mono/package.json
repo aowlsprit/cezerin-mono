@@ -50,9 +50,7 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --write \"src/**/*.js\"",
     "precommit": "lint-staged",
-    "start-api": "node -r esm src/api/server/index.js",
-    "start-store": "node -r esm dist/store/server/index.js",
-    "start": "concurrently yarn:start-*"
+    "start": "node -r esm dist/store/server/index.js"
   },
   "lint-staged": {
     "*.js": [
