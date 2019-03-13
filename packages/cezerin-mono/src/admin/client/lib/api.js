@@ -1,5 +1,5 @@
 import CezerinClient from '@aowlsprit/cezerin-client';
-import settings from 'lib/settings';
+import settings from './settings';
 
 let api = null;
 const dashboardToken = localStorage.getItem('dashboard_token');

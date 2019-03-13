@@ -4,10 +4,4 @@ import * as JivositeApp from './jivosite';
 import * as FacebookSDKApp from './facebook-sdk';
 import * as FacebookCustomerChatApp from './facebook-customer-chat';
 
-export default [
-	GoogleAnalyticsApp,
-	SiteVerificationApp,
-	JivositeApp,
-	FacebookSDKApp,
-	FacebookCustomerChatApp
-];
+export default [GoogleAnalyticsApp, SiteVerificationApp, JivositeApp, FacebookSDKApp, FacebookCustomerChatApp];
