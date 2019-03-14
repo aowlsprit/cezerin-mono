@@ -72,7 +72,7 @@ const checkTokenInBlacklistCallback = async (req, payload, done) => {
     const tokenIsRevoked = blacklist.includes(jti);
     return done(null, tokenIsRevoked);
   } catch (e) {
-    done(e, SET_TOKEN_AS_REVOKEN_ON_EXCEPTION);
+    return done(e, SET_TOKEN_AS_REVOKEN_ON_EXCEPTION);
   }
 };
 
@@ -87,7 +87,10 @@ const applyMiddleware = app => {
   }
 };
 
-const getAccessControlAllowOrigin = () => settings.storeBaseUrl || '*';
+const getAccessControlAllowOrigin = req => {
+  if (req.get('origin') != null) return req.get('origin');
+  return settings.storeBaseUrl || '*';
+};
 
 export default {
   checkUserScope,

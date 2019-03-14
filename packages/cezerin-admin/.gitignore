@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/admin-assets/js/app-*
+public/admin-assets/js/vendor-*
+public/admin-assets/css/bundle-*
+public/index.html
+public/content/*
+!public/content/*.md

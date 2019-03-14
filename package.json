@@ -12,7 +12,8 @@
   "scripts": {
     "setup": "cd packages/cezerin-api && yarn setup",
     "start:api": "cd packages/cezerin-api && yarn start",
-    "start:ssr": "cd packages/cezerin-mono && yarn start",
+    "start:store": "cd packages/cezerin-store && yarn start",
+    "start:admin": "cd packages/cezerin-admin && yarn start",
     "start": "run-p 'start:*'",
     "clean-deps": "rimraf packages/*/node_modules/ && rimraf node_modules/",
     "cleanall": "yarn run clean && yarn run clean-deps",
