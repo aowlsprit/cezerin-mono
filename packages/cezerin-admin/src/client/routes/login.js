@@ -54,7 +54,7 @@ export default class LoginForm extends React.Component {
           isFetching: false,
           isAuthorized: false,
           emailIsSent: false,
-          error: error
+          error
         });
       });
   };
@@ -62,6 +62,7 @@ export default class LoginForm extends React.Component {
   componentWillMount() {
     auth.checkTokenFromUrl();
   }
+
   componentDidMount() {}
 
   render() {
@@ -69,13 +70,9 @@ export default class LoginForm extends React.Component {
 
     let response = null;
     if (isFetching) {
-      response = (
-        <div className="loginSuccessResponse">{messages.messages_loading}</div>
-      );
+      response = <div className="loginSuccessResponse">{messages.messages_loading}</div>;
     } else if (emailIsSent) {
-      response = (
-        <div className="loginSuccessResponse">{messages.loginLinkSent}</div>
-      );
+      response = <div className="loginSuccessResponse">{messages.loginLinkSent}</div>;
     } else if (emailIsSent === false && error) {
       response = <div className="loginErrorResponse">{error}</div>;
     }
@@ -93,14 +90,14 @@ export default class LoginForm extends React.Component {
                 onChange={this.handleChange}
                 onKeyPress={this.handleKeyPress}
                 label={messages.email}
-                fullWidth={true}
+                fullWidth
                 hintStyle={{ width: '100%' }}
                 hintText={messages.email}
               />
             </div>
             <RaisedButton
               label={messages.loginButton}
-              primary={true}
+              primary
               disabled={isFetching || emailIsSent}
               onClick={this.handleSubmit}
             />

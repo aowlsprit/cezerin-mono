@@ -9,16 +9,12 @@ import ServiceDetails from 'modules/apps/serviceDetails';
 import AppDetails from 'modules/apps/appDetails';
 
 export default () => (
-	<Switch>
-		<Route path="/admin/apps" exact component={Services} />
-		<Route
-			path="/admin/apps/service/:serviceId"
-			exect
-			component={ServiceDetails}
-		/>
-		<Route path="/admin/apps/app/:appKey" exect component={AppDetails} />
-		<Route path="/admin/apps/login" exact component={Login} />
-		<Route path="/admin/apps/account" exact component={Account} />
-		<Route component={NotFound} />
-	</Switch>
+  <Switch>
+    <Route path="/admin/apps" exact component={Services} />
+    <Route path="/admin/apps/service/:serviceId" exect component={ServiceDetails} />
+    <Route path="/admin/apps/app/:appKey" exect component={AppDetails} />
+    <Route path="/admin/apps/login" exact component={Login} />
+    <Route path="/admin/apps/account" exact component={Account} />
+    <Route component={NotFound} />
+  </Switch>
 );

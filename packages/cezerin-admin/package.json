@@ -43,8 +43,8 @@
     "webpack:admin:watch": "webpack --config webpack.config.admin.js --mode development --watch",
     "build": "yarn run compile && yarn run webpack:admin",
     "build:watch": "yarn run webpack:admin:watch",
-    "lint": "eslint '**/*.js' --ignore-path .gitignore",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint '**/*.js' --ignore-path .esignore",
+    "lint:fix": "eslint '**/*.js' --ignore-path .esignore --fix",
     "prettier": "prettier --write \"src/**/*.js\"",
     "precommit": "lint-staged",
     "start": "node -r esm dist/server/index.js"

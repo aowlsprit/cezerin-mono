@@ -1,6 +1,6 @@
 import React from 'react';
-import TinyMCE from '../tinymce';
 import settings from 'lib/settings';
+import TinyMCE from '../tinymce';
 
 const config = {
   inline: true,
@@ -11,8 +11,7 @@ const config = {
   ],
   toolbar1:
     'image media | styleselect | bold italic bullist numlist link alignleft aligncenter alignright alignjustify',
-  toolbar2:
-    'undo redo | forecolor paste removeformat table | outdent indent | preview code'
+  toolbar2: 'undo redo | forecolor paste removeformat table | outdent indent | preview code'
 };
 
 export default class Editor extends React.Component {
