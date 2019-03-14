@@ -1,9 +1,5 @@
 import api from './api';
-import {
-  getParsedProductFilter,
-  getProductFilterForCategory,
-  getProductFilterForSearch
-} from '../shared/actions';
+import { getParsedProductFilter, getProductFilterForCategory, getProductFilterForSearch } from '../shared/actions';
 import * as themeLocales from './themeLocales';
 import {
   PAGE,

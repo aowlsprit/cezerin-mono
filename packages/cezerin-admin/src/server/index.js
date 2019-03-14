@@ -10,7 +10,10 @@ import logger from './logger';
 
 const app = express();
 
+const STATIC_PATH = path.join(__dirname, '..', '..', '..', 'cezerin-api', 'public', 'content');
+const THEME_PATH = path.join(__dirname, '..', '..', '..', 'cezerin-theme', 'assets');
 const ADMIN_INDEX_PATH = path.resolve('public/index.html');
+
 const STATIC_OPTIONS = {
   maxAge: 31536000000 // One year
 };
@@ -23,8 +26,9 @@ app.get('/images/:entity/:id/:size/:filename', (req, res, next) => {
   req.url = newUrl;
   next();
 });
-app.use(express.static('public/content', STATIC_OPTIONS));
-app.use('/assets', express.static('../cezerin-theme/assets', STATIC_OPTIONS));
+
+app.use(express.static(STATIC_PATH, STATIC_OPTIONS));
+app.use('/assets', express.static(THEME_PATH, STATIC_OPTIONS));
 app.use('/admin-assets', express.static('public/admin-assets', STATIC_OPTIONS));
 app.use('/sw.js', express.static('../cezerin-theme/assets/sw.js'));
 app.use('/admin', (req, res) => {

@@ -9,7 +9,7 @@ const THEME_PATH = path.join(__dirname, '../', 'cezerin-theme');
 
 module.exports = {
   entry: {
-    app: ['babel-polyfill', './src/store/client/index.js'],
+    app: ['babel-polyfill', './src/client/index.js'],
     theme: [THEME_PATH]
   },
 
