@@ -22,6 +22,7 @@ export default class AjaxClient extends RestClient {
 
   getCredentialsConfig(baseUrl) {
     const includePrefix = baseUrl.includes('http://') || baseUrl.includes('https://');
+    // return 'omit';
     return includePrefix ? 'include' : 'same-origin';
   }
 }
