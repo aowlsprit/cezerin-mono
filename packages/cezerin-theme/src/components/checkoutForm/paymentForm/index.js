@@ -27,11 +27,7 @@ export default class PaymentForm extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { gateway, amount } = this.props;
-    return (
-      nextProps.gateway !== gateway ||
-      nextProps.amount !== amount ||
-      this.state !== nextState
-    );
+    return nextProps.gateway !== gateway || nextProps.amount !== amount || this.state !== nextState;
   }
 
   fetchFormSettings = () => {

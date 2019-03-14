@@ -11,8 +11,7 @@ import {
 
 const PRODUCT_FIELDS =
   'path,id,name,category_id,category_ids,category_name,sku,images,enabled,discontinued,stock_status,stock_quantity,price,on_sale,regular_price,attributes,tags,position';
-const CATEGORIES_FIELDS =
-  'image,name,description,meta_description,meta_title,sort,parent_id,position,slug,id';
+const CATEGORIES_FIELDS = 'image,name,description,meta_description,meta_title,sort,parent_id,position,slug,id';
 
 const getCurrentPage = path =>
   api.sitemap.retrieve({ path, enabled: true }).then(sitemapResponse => {
@@ -26,9 +25,7 @@ const getCurrentPage = path =>
         resource: null
       };
     }
-    return Promise.reject(
-      new Error(`Page response code = ${sitemapResponse.status}`)
-    );
+    return Promise.reject(new Error(`Page response code = ${sitemapResponse.status}`));
   });
 
 const getProducts = (currentPage, productFilter) => {
@@ -66,53 +63,32 @@ const getThemeSettings = () =>
 const getAllData = (currentPage, productFilter, cookie) =>
   Promise.all([
     api.checkoutFields.list().then(({ json }) => json),
-    api.productCategories
-      .list({ enabled: true, fields: CATEGORIES_FIELDS })
-      .then(({ json }) => json),
+    api.productCategories.list({ enabled: true, fields: CATEGORIES_FIELDS }).then(({ json }) => json),
     api.ajax.cart.retrieve(cookie).then(({ json }) => json),
     getProducts(currentPage, productFilter),
     getProduct(currentPage),
     getPage(currentPage),
     getThemeSettings()
-  ]).then(
-    ([
+  ]).then(([checkoutFields, categories, cart, products, product, page, themeSettings]) => {
+    let categoryDetails = null;
+    if (currentPage.type === PRODUCT_CATEGORY) {
+      categoryDetails = categories.find(c => c.id === currentPage.resource);
+    }
+
+    return {
       checkoutFields,
       categories,
       cart,
       products,
       product,
       page,
+      categoryDetails,
       themeSettings
-    ]) => {
-      let categoryDetails = null;
-      if (currentPage.type === PRODUCT_CATEGORY) {
-        categoryDetails = categories.find(c => c.id === currentPage.resource);
-      }
-
-      return {
-        checkoutFields,
-        categories,
-        cart,
-        products,
-        product,
-        page,
-        categoryDetails,
-        themeSettings
-      };
-    }
-  );
+    };
+  });
 
 const getState = (currentPage, settings, allData, location, productFilter) => {
-  const {
-    checkoutFields,
-    categories,
-    cart,
-    products,
-    product,
-    page,
-    categoryDetails,
-    themeSettings
-  } = allData;
+  const { checkoutFields, categories, cart, products, product, page, categoryDetails, themeSettings } = allData;
 
   let productsTotalCount = 0;
   let productsHasMore = false;
@@ -161,14 +137,8 @@ const getState = (currentPage, settings, allData, location, productFilter) => {
         priceTo: productFilter.priceTo || 0,
         attributes: productFilter.attributes,
         sort: settings.default_product_sorting,
-        fields:
-          settings.product_fields && settings.product_fields !== ''
-            ? settings.product_fields
-            : PRODUCT_FIELDS,
-        limit:
-          settings.products_limit && settings.products_limit !== 0
-            ? settings.products_limit
-            : 30
+        fields: settings.product_fields && settings.product_fields !== '' ? settings.product_fields : PRODUCT_FIELDS,
+        limit: settings.products_limit && settings.products_limit !== 0 ? settings.products_limit : 30
       },
       cart,
       order: null,
@@ -184,23 +154,15 @@ const getFilter = (currentPage, urlQuery, settings) => {
   let productFilter = {};
 
   if (currentPage.type === PRODUCT_CATEGORY) {
-    productFilter = getProductFilterForCategory(
-      urlQuery,
-      settings.default_product_sorting
-    );
+    productFilter = getProductFilterForCategory(urlQuery, settings.default_product_sorting);
     productFilter.categoryId = currentPage.resource;
   } else if (currentPage.type === SEARCH) {
     productFilter = getProductFilterForSearch(urlQuery);
   }
 
   productFilter.fields =
-    settings.product_fields && settings.product_fields !== ''
-      ? settings.product_fields
-      : PRODUCT_FIELDS;
-  productFilter.limit =
-    settings.products_limit && settings.products_limit !== 0
-      ? settings.products_limit
-      : 30;
+    settings.product_fields && settings.product_fields !== '' ? settings.product_fields : PRODUCT_FIELDS;
+  productFilter.limit = settings.products_limit && settings.products_limit !== 0 ? settings.products_limit : 30;
 
   return productFilter;
 };
@@ -208,9 +170,7 @@ const getFilter = (currentPage, urlQuery, settings) => {
 export const loadState = (req, language) => {
   const cookie = req.get('cookie');
   const urlPath = req.path;
-  const urlQuery = req.url.includes('?')
-    ? req.url.substring(req.url.indexOf('?'))
-    : '';
+  const urlQuery = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
   const location = {
     hasHistory: false,
     pathname: urlPath,
@@ -227,13 +187,7 @@ export const loadState = (req, language) => {
     const productFilter = getFilter(currentPage, urlQuery, settings);
 
     return getAllData(currentPage, productFilter, cookie).then(allData => {
-      const state = getState(
-        currentPage,
-        settings,
-        allData,
-        location,
-        productFilter
-      );
+      const state = getState(currentPage, settings, allData, location, productFilter);
       return {
         state,
         themeText,

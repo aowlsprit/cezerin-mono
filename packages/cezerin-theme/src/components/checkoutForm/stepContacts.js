@@ -5,13 +5,10 @@ import { formatCurrency } from '../../lib/helper';
 import InputField from './inputField';
 import CountrySelection from './countrySelection';
 
-const validateRequired = value =>
-  value && value.length > 0 ? undefined : text.required;
+const validateRequired = value => (value && value.length > 0 ? undefined : text.required);
 
 const validateEmail = value =>
-  value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)
-    ? text.emailInvalid
-    : undefined;
+  value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ? text.emailInvalid : undefined;
 
 const ReadOnlyField = ({ name, value }) => (
   <div className="checkout-field-preview">
@@ -54,9 +51,7 @@ class CheckoutStepContacts extends React.Component {
 
   getFieldPlaceholder = fieldName => {
     const field = this.getField(fieldName);
-    return field && field.placeholder && field.placeholder.length > 0
-      ? field.placeholder
-      : '';
+    return field && field.placeholder && field.placeholder.length > 0 ? field.placeholder : '';
   };
 
   getFieldLabelText = fieldName => {
@@ -82,9 +77,7 @@ class CheckoutStepContacts extends React.Component {
 
   getFieldLabel = fieldName => {
     const labelText = this.getFieldLabelText(fieldName);
-    return this.isFieldOptional(fieldName)
-      ? `${labelText} (${text.optional})`
-      : labelText;
+    return this.isFieldOptional(fieldName) ? `${labelText} (${text.optional})` : labelText;
   };
 
   render() {
@@ -120,51 +113,28 @@ class CheckoutStepContacts extends React.Component {
             {title}
           </h1>
 
-          {!this.isFieldHidden('email') && (
-            <ReadOnlyField name={text.email} value={initialValues.email} />
-          )}
-          {!this.isFieldHidden('mobile') && (
-            <ReadOnlyField name={text.mobile} value={initialValues.mobile} />
-          )}
+          {!this.isFieldHidden('email') && <ReadOnlyField name={text.email} value={initialValues.email} />}
+          {!this.isFieldHidden('mobile') && <ReadOnlyField name={text.mobile} value={initialValues.mobile} />}
           {!this.isFieldHidden('country') && (
-            <ReadOnlyField
-              name={text.country}
-              value={initialValues.shipping_address.country}
-            />
+            <ReadOnlyField name={text.country} value={initialValues.shipping_address.country} />
           )}
           {!this.isFieldHidden('state') && (
-            <ReadOnlyField
-              name={text.state}
-              value={initialValues.shipping_address.state}
-            />
+            <ReadOnlyField name={text.state} value={initialValues.shipping_address.state} />
           )}
           {!this.isFieldHidden('city') && (
-            <ReadOnlyField
-              name={text.city}
-              value={initialValues.shipping_address.city}
-            />
+            <ReadOnlyField name={text.city} value={initialValues.shipping_address.city} />
           )}
-          <ReadOnlyField
-            name={text.shippingMethod}
-            value={initialValues.shipping_method}
-          />
-          <ReadOnlyField
-            name={text.paymentMethod}
-            value={initialValues.payment_method}
-          />
+          <ReadOnlyField name={text.shippingMethod} value={initialValues.shipping_method} />
+          <ReadOnlyField name={text.paymentMethod} value={initialValues.payment_method} />
 
           <div className="checkout-button-wrap">
-            <button
-              type="button"
-              onClick={onEdit}
-              className={editButtonClassName}
-            >
+            <button type="button" onClick={onEdit} className={editButtonClassName}>
               {text.edit}
             </button>
           </div>
         </div>
       );
-    } 
+    }
     return (
       <div className="checkout-step">
         <h1>
@@ -210,12 +180,8 @@ class CheckoutStepContacts extends React.Component {
               label={this.getFieldLabel('country')}
               validate={this.getFieldValidators('country')}
               placeholder={this.getFieldPlaceholder('country')}
-              onChange={(event, value) =>
-                setTimeout(() => saveShippingLocation({ country: value }))
-              }
-              onBlur={(event, value) =>
-                setTimeout(() => saveShippingLocation({ country: value }))
-              }
+              onChange={(event, value) => setTimeout(() => saveShippingLocation({ country: value }))}
+              onBlur={(event, value) => setTimeout(() => saveShippingLocation({ country: value }))}
             />
           )}
 
@@ -229,9 +195,7 @@ class CheckoutStepContacts extends React.Component {
               label={this.getFieldLabel('state')}
               validate={this.getFieldValidators('state')}
               placeholder={this.getFieldPlaceholder('state')}
-              onBlur={(event, value) =>
-                setTimeout(() => saveShippingLocation({ state: value }))
-              }
+              onBlur={(event, value) => setTimeout(() => saveShippingLocation({ state: value }))}
             />
           )}
 
@@ -245,26 +209,18 @@ class CheckoutStepContacts extends React.Component {
               label={this.getFieldLabel('city')}
               validate={this.getFieldValidators('city')}
               placeholder={this.getFieldPlaceholder('city')}
-              onBlur={(event, value) =>
-                setTimeout(() => saveShippingLocation({ city: value }))
-              }
+              onBlur={(event, value) => setTimeout(() => saveShippingLocation({ city: value }))}
             />
           )}
 
           <h2>
-            {text.shippingMethods}{' '}
-            {loadingShippingMethods && <small>{text.loading}</small>}
+            {text.shippingMethods} {loadingShippingMethods && <small>{text.loading}</small>}
           </h2>
           <div className="shipping-methods">
             {shippingMethods.map((method, index) => (
               <label
                 key={index}
-                className={
-                  'shipping-method' +
-                  (method.id === initialValues.shipping_method_id
-                    ? ' active'
-                    : '')
-                }
+                className={`shipping-method${method.id === initialValues.shipping_method_id ? ' active' : ''}`}
               >
                 <Field
                   name="shipping_method_id"
@@ -275,31 +231,21 @@ class CheckoutStepContacts extends React.Component {
                 />
                 <div>
                   <div className="shipping-method-name">{method.name}</div>
-                  <div className="shipping-method-description">
-                    {method.description}
-                  </div>
+                  <div className="shipping-method-description">{method.description}</div>
                 </div>
-                <span className="shipping-method-rate">
-                  {formatCurrency(method.price, settings)}
-                </span>
+                <span className="shipping-method-rate">{formatCurrency(method.price, settings)}</span>
               </label>
             ))}
           </div>
 
           <h2>
-            {text.paymentMethods}{' '}
-            {loadingPaymentMethods && <small>{text.loading}</small>}
+            {text.paymentMethods} {loadingPaymentMethods && <small>{text.loading}</small>}
           </h2>
           <div className="payment-methods">
-            {paymentMethods.map((method) => (
+            {paymentMethods.map(method => (
               <label
                 key={method}
-                className={
-                  'payment-method' +
-                  (method.id === initialValues.payment_method_id
-                    ? ' active'
-                    : '')
-                }
+                className={`payment-method${method.id === initialValues.payment_method_id ? ' active' : ''}`}
               >
                 <Field
                   name="payment_method_id"
@@ -311,9 +257,7 @@ class CheckoutStepContacts extends React.Component {
                 />
                 <div>
                   <div className="payment-method-name">{method.name}</div>
-                  <div className="payment-method-description">
-                    {method.description}
-                  </div>
+                  <div className="payment-method-description">{method.description}</div>
                 </div>
                 <span className="payment-method-logo" />
               </label>
@@ -321,11 +265,7 @@ class CheckoutStepContacts extends React.Component {
           </div>
 
           <div className="checkout-button-wrap">
-            <button
-              type="submit"
-              disabled={invalid}
-              className={buttonClassName}
-            >
+            <button type="submit" disabled={invalid} className={buttonClassName}>
               {text.next}
             </button>
           </div>

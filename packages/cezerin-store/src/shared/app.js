@@ -18,82 +18,76 @@ import { setCurrentPage } from './actions';
 import { PAGE, PRODUCT_CATEGORY, PRODUCT, RESERVED, SEARCH } from './pageTypes';
 
 class SwitchContainers extends React.Component {
-	constructor(props) {
-		super(props);
-	}
+  constructor(props) {
+    super(props);
+  }
 
-	componentWillReceiveProps(nextProps) {
-		this.props.setCurrentPage(nextProps.location);
+  componentWillReceiveProps(nextProps) {
+    this.props.setCurrentPage(nextProps.location);
 
-		if (nextProps.location && this.props.location) {
-			const pathnameChanged =
-				nextProps.location.pathname !== this.props.location.pathname;
-			const queryChanged =
-				nextProps.location.search !== this.props.location.search;
-			const isSearchPage = nextProps.location.pathname === '/search';
+    if (nextProps.location && this.props.location) {
+      const pathnameChanged = nextProps.location.pathname !== this.props.location.pathname;
+      const queryChanged = nextProps.location.search !== this.props.location.search;
+      const isSearchPage = nextProps.location.pathname === '/search';
 
-			if (pathnameChanged || (queryChanged && isSearchPage)) {
-				animateScroll.scrollToTop({
-					duration: 500,
-					delay: 100,
-					smooth: true
-				});
-			}
-		}
-	}
+      if (pathnameChanged || (queryChanged && isSearchPage)) {
+        animateScroll.scrollToTop({
+          duration: 500,
+          delay: 100,
+          smooth: true
+        });
+      }
+    }
+  }
 
-	render() {
-		const { history, location, currentPage } = this.props;
-		const locationPathname =
-			location && location.pathname ? location.pathname : '/';
+  render() {
+    const { history, location, currentPage } = this.props;
+    const locationPathname = location && location.pathname ? location.pathname : '/';
 
-		switch (currentPage.type) {
-			case PRODUCT:
-				return <ProductContainer />;
-			case PRODUCT_CATEGORY:
-				return <CategoryContainer />;
-			case SEARCH:
-				return <SearchContainer />;
-			case PAGE:
-				if (locationPathname === '/') {
-					return <IndexContainer />;
-				} else if (locationPathname === '/checkout') {
-					return <CheckoutContainer />;
-				}
-				if (locationPathname === '/checkout-success') {
-					return <CheckoutSuccessContainer />;
-				} else {
-					return <PageContainer />;
-				}
-			default:
-				return <NotFoundContainer />;
-		}
-	}
+    switch (currentPage.type) {
+      case PRODUCT:
+        return <ProductContainer />;
+      case PRODUCT_CATEGORY:
+        return <CategoryContainer />;
+      case SEARCH:
+        return <SearchContainer />;
+      case PAGE:
+        if (locationPathname === '/') {
+          return <IndexContainer />;
+        }
+        if (locationPathname === '/checkout') {
+          return <CheckoutContainer />;
+        }
+        if (locationPathname === '/checkout-success') {
+          return <CheckoutSuccessContainer />;
+        }
+        return <PageContainer />;
+
+      default:
+        return <NotFoundContainer />;
+    }
+  }
 }
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		currentPage: state.app.currentPage
-	};
-};
+const mapStateToProps = (state, ownProps) => ({
+  currentPage: state.app.currentPage
+});
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-	return {
-		setCurrentPage: location => {
-			dispatch(setCurrentPage(location));
-		}
-	};
-};
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  setCurrentPage: location => {
+    dispatch(setCurrentPage(location));
+  }
+});
 
 const SwitchContainersConnected = connect(
-	mapStateToProps,
-	mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(SwitchContainers);
 
 const App = () => (
-	<SharedContainer>
-		<Route component={SwitchContainersConnected} />
-	</SharedContainer>
+  <SharedContainer>
+    <Route component={SwitchContainersConnected} />
+  </SharedContainer>
 );
 
 export default App;

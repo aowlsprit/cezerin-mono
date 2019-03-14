@@ -9,8 +9,8 @@
     "compile": "babel src -d dist --presets react --plugins transform-class-properties --quiet",
     "compile:watch": "yarn run compile --watch",
     "build": "yarn run compile",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --ignore-path .esignore",
+    "lint:fix": "eslint . --ignore-path .esignore --fix",
     "prettier": "prettier --write \"src/**/*.js\" \"theme/**/*.js\"",
     "precommit": "lint-staged"
   },

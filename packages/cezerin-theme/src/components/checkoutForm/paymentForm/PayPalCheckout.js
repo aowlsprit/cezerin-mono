@@ -49,7 +49,7 @@ export default class PayPalButton extends React.Component {
           production: formSettings.client
         },
         // Wait for the PayPal button to be clicked
-        payment: function(data, actions) {
+        payment(data, actions) {
           return actions.payment.create({
             payment: {
               intent: 'sale',
@@ -71,39 +71,32 @@ export default class PayPalButton extends React.Component {
         },
         // Wait for the payment to be authorized by the customer
 
-        onAuthorize: function(data, actions) {
+        onAuthorize(data, actions) {
           // Get the payment details
 
-          return actions.payment.get().then(function(data) {
-            if (
-              data.state.toLowerCase() === 'created' &&
-              data.payer.status.toLowerCase() === 'verified'
-            ) {
+          return actions.payment.get().then(data => {
+            if (data.state.toLowerCase() === 'created' && data.payer.status.toLowerCase() === 'verified') {
               // Display a confirmation button
-              document.querySelector('#paypal-button-container').style.display =
-                'none';
+              document.querySelector('#paypal-button-container').style.display = 'none';
               document.querySelector('#confirm').style.display = 'block';
 
               // Listen for click on confirm button
 
-              document
-                .querySelector('#confirmButton')
-                .addEventListener('click', function() {
-                  // Disable the button and show a loading indicator
+              document.querySelector('#confirmButton').addEventListener('click', () => {
+                // Disable the button and show a loading indicator
 
-                  document.querySelector('#confirmButton').innerText = '';
-                  document.querySelector('#confirmButton').className =
-                    'loading-process';
-                  document.querySelector('#confirm').disabled = true;
+                document.querySelector('#confirmButton').innerText = '';
+                document.querySelector('#confirmButton').className = 'loading-process';
+                document.querySelector('#confirm').disabled = true;
 
-                  // Execute the payment
+                // Execute the payment
 
-                  return actions.payment.execute().then(function(res) {
-                    if (res.state.toLowerCase() === 'approved') {
-                      onPayment();
-                    }
-                  });
+                return actions.payment.execute().then(res => {
+                  if (res.state.toLowerCase() === 'approved') {
+                    onPayment();
+                  }
                 });
+              });
             }
           });
         }
@@ -118,15 +111,8 @@ export default class PayPalButton extends React.Component {
     return (
       <div>
         <div id="paypal-button-container" />
-        <div
-          id="confirm"
-          className="checkout-button-wrap"
-          style={{ display: 'none' }}
-        >
-          <button
-            id="confirmButton"
-            className="checkout-button button confirm-checkout is-primary"
-          >
+        <div id="confirm" className="checkout-button-wrap" style={{ display: 'none' }}>
+          <button id="confirmButton" className="checkout-button button confirm-checkout is-primary">
             Confirm
           </button>
         </div>

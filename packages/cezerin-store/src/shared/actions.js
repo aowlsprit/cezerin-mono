@@ -1,7 +1,7 @@
-import * as t from './actionTypes';
-import { PAGE, PRODUCT_CATEGORY, PRODUCT, RESERVED, SEARCH } from './pageTypes';
 import queryString from 'query-string';
 import { animateScroll } from 'react-scroll';
+import * as t from './actionTypes';
+import { PAGE, PRODUCT_CATEGORY, PRODUCT, RESERVED, SEARCH } from './pageTypes';
 import api from '../client/api';
 import * as analytics from './analytics';
 
@@ -22,7 +22,7 @@ export const fetchProducts = () => async (dispatch, getState) => {
 export const getProductFilterForCategory = (locationSearch, sortBy) => {
   const queryFilter = queryString.parse(locationSearch);
 
-  let attributes = {};
+  const attributes = {};
   for (const querykey in queryFilter) {
     if (querykey.startsWith('attributes.')) {
       attributes[querykey] = queryFilter[querykey];
@@ -32,7 +32,7 @@ export const getProductFilterForCategory = (locationSearch, sortBy) => {
   return {
     priceFrom: parseInt(queryFilter.price_from || 0),
     priceTo: parseInt(queryFilter.price_to || 0),
-    attributes: attributes,
+    attributes,
     search: null,
     sort: sortBy
   };
@@ -59,9 +59,9 @@ export const getParsedProductFilter = productFilter => {
       category_id: productFilter.categoryId,
       price_from: productFilter.priceFrom,
       price_to: productFilter.priceTo,
-      sort: productFilter['sort'],
-      fields: productFilter['fields'],
-      limit: productFilter['limit'],
+      sort: productFilter.sort,
+      fields: productFilter.fields,
+      limit: productFilter.limit,
       offset: 0
     },
     productFilter.attributes
@@ -76,13 +76,7 @@ const receiveProducts = products => ({ type: t.PRODUCTS_RECEIVE, products });
 
 export const fetchMoreProducts = () => async (dispatch, getState) => {
   const { app } = getState();
-  if (
-    app.loadingProducts ||
-    app.loadingMoreProducts ||
-    app.products.length === 0 ||
-    !app.productsHasMore
-  ) {
-    return;
+  if (app.loadingProducts || app.loadingMoreProducts || app.products.length === 0 || !app.productsHasMore) {
   } else {
     dispatch(requestMoreProducts());
 
@@ -124,20 +118,17 @@ export const addCartItem = item => async (dispatch, getState) => {
   const cart = response.json;
   dispatch(receiveCart(cart));
   analytics.addCartItem({
-    item: item,
-    cart: cart
+    item,
+    cart
   });
 };
 
 const requestAddCartItem = () => ({ type: t.CART_ITEM_ADD_REQUEST });
 
-export const updateCartItemQuantiry = (item_id, quantity) => async (
-  dispatch,
-  getState
-) => {
+export const updateCartItemQuantiry = (item_id, quantity) => async (dispatch, getState) => {
   dispatch(requestUpdateCartItemQuantiry());
   const response = await api.ajax.cart.updateItem(item_id, {
-    quantity: quantity
+    quantity
   });
   dispatch(receiveCart(response.json));
   dispatch(fetchShippingMethods());
@@ -216,7 +207,7 @@ export const checkout = (cart, history) => async (dispatch, getState) => {
   const order = response.json;
   dispatch(receiveCheckout(order));
   history.push('/checkout-success');
-  analytics.checkoutSuccess({ order: order });
+  analytics.checkoutSuccess({ order });
 };
 
 const requestCheckout = () => ({ type: t.CHECKOUT_REQUEST });
@@ -238,7 +229,7 @@ export const setCategory = categoryId => (dispatch, getState) => {
   const category = app.categories.find(c => c.id === categoryId);
   if (category) {
     dispatch(setCurrentCategory(category));
-    dispatch(setProductsFilter({ categoryId: categoryId }));
+    dispatch(setProductsFilter({ categoryId }));
     dispatch(receiveProduct(null));
   }
 };
@@ -249,13 +240,13 @@ const setCurrentCategory = category => ({
 });
 
 export const setSort = sort => (dispatch, getState) => {
-  dispatch(setProductsFilter({ sort: sort }));
+  dispatch(setProductsFilter({ sort }));
   dispatch(fetchProducts());
 };
 
 const setProductsFilter = filter => ({
   type: t.SET_PRODUCTS_FILTER,
-  filter: filter
+  filter
 });
 
 export const analyticsSetShippingMethod = method_id => (dispatch, getState) => {
@@ -305,8 +296,7 @@ export const setCurrentPage = location => async (dispatch, getState) => {
     stateHash = app.location.hash;
   }
 
-  const currentPageAlreadyInState =
-    statePathname === locationPathname && stateSearch === locationSearch;
+  const currentPageAlreadyInState = statePathname === locationPathname && stateSearch === locationSearch;
 
   if (currentPageAlreadyInState) {
     // same page
@@ -364,10 +354,7 @@ const fetchDataOnCurrentPageChange = currentPage => (dispatch, getState) => {
 
   switch (currentPage.type) {
     case PRODUCT_CATEGORY:
-      productFilter = getProductFilterForCategory(
-        app.location.search,
-        app.settings.default_product_sorting
-      );
+      productFilter = getProductFilterForCategory(app.location.search, app.settings.default_product_sorting);
       dispatch(setCategory(currentPage.resource));
       dispatch(setProductsFilter(productFilter));
       dispatch(fetchProducts());

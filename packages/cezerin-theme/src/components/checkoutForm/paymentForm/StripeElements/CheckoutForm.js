@@ -38,9 +38,7 @@ class CheckoutForm extends React.Component {
             type="button"
             onClick={this.submit}
             disabled={inProgress}
-            className={`checkout-button button is-primary${
-              inProgress ? ' is-loading' : ''
-            }`}
+            className={`checkout-button button is-primary${inProgress ? ' is-loading' : ''}`}
           >
             Confirm order
           </button>
